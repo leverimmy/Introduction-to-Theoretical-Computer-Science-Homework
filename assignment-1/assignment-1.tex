@@ -1,0 +1,221 @@
+\documentclass{homework}
+\usepackage{bussproofs}
+\EnableBpAbbreviations
+\usepackage{ctex}
+
+\name{熊泽恩} % Replace (Student Name) with your name.
+\id{2022011223}
+\term{2024 Spring}
+\course{Introduction to Theoretical Computer Science}
+\hwnum{1}
+
+%\hwname{(Name)}          % Uncomment and replace (Name) with the type of the
+                          % homework (e.g, Assignment, Problem Set, etc.) if you
+                          % don't want the document to be labeled as "Homework."
+%\problemname{(Name)}     % Uncomment and replace (Name) with the desired label
+                          % for problems created with the problem environment.
+%\solutionname{(Name)}    % Uncomment and replace (Name) with the desired label
+                          % for solutions created with the solution environment.
+
+% Load any other packages you need here.
+
+\begin{document}
+
+\begin{problem}
+  Decide whether the following is a $\lambda$ term (or an abbreviation of a
+  $\lambda$ term).
+  If it is not, explain the reason.
+  \begin{parts}
+    \part\label{1.a}
+    $\lambda x . x x x$
+    \part\label{1.b}
+    $\lambda \lambda x. x $
+    \part\label{1.c}
+    $\lambda y. (\lambda x. x)$
+    \part\label{1.d}
+    $\lambda uv.((xxy)xy)y)$
+  \end{parts}
+\end{problem}
+
+\begin{solution}
+
+  \ref{1.a} % chktex 2
+  Yes.
+
+  \ref{1.b} % chktex 2
+  No. The reason is that there are 2 consecutive $\lambda$ s,
+  but there is only 1 dot(.).
+
+  \ref{1.c}
+  Yes.
+
+  \ref{1.d}
+  No. The reason is that the rightmost parenthesis does not match.
+
+\end{solution}
+
+\begin{problem}
+  Compute the terms represented by the following substitutions:
+  \begin{parts}
+    \part\label{2.a}
+    $(xyz)[y/z]$.
+    \part\label{2.b}
+    $(\lambda x.x)[y/z]$.
+    \part\label{2.c}
+    $(\lambda y.xy)[yy/x]$.
+  \end{parts}
+\end{problem}
+
+\begin{solution}
+
+  \ref{2.a}
+  $(xyz).[y/z] = xzz$.
+
+  \ref{2.b}
+  $(\lambda x.x)[y/z] = \lambda x.x$.
+
+  \ref{2.c}
+  $(\lambda y.xy)[yy/x] = (\lambda u.xu)[yy/x] = \lambda u.(xu[yy/x]) = \lambda u.yyu$.
+
+\end{solution}
+
+\begin{problem}
+  Prove the following equalities in the theory of $\lambda\beta$.
+  You need to draw the ``proof tree'' using the rules we defined in the lecture.
+  \begin{parts}
+    \part\label{3.a}
+    $\lambda uv.v = \lambda u.(\lambda x.x) (\lambda u.u)$.
+    \part\label{3.b}
+    $\lambda uv.(\lambda xy.y) uv = \lambda ab.b$.
+  \end{parts}
+\end{problem}
+
+\begin{solution}
+  \ref{3.a}
+  \begin{prooftree}
+    \AXC{}
+    \LeftLabel{($\alpha$)}
+    \UIC{$\lambda v.v = \lambda u.u$}
+    \AXC{}
+    \LeftLabel{($\beta$)}
+    \UIC{$(\lambda x.x)(\lambda u.u) = \lambda u.u$}
+    \LeftLabel{(trans)}
+    \BIC{$\lambda v.v = (\lambda x.x)(\lambda u.u)$}
+    \LeftLabel{(abst)}
+    \UIC{$\lambda uv.v = \lambda u.(\lambda x.x)(\lambda u.u)$}
+  \end{prooftree}
+
+  Therefore $\lambda \beta \vdash \lambda uv.v = \lambda u.(\lambda x.x) (\lambda u.u)$.
+
+  \ref{3.b}
+  \begin{prooftree}
+    \AXC{}
+    \LeftLabel{($\beta$)}
+    \UIC{$(\lambda xy.y)uv = v$}
+    \LeftLabel{(abst)}
+    \UIC{$\lambda uv(\lambda xy.y)uv = \lambda uv.v$}
+    \LeftLabel{($\alpha$)}
+    \AXC{}
+    \UIC{$\lambda uv.v = \lambda ab.b$}
+    \LeftLabel{(trans)}
+    \BIC{$\lambda uv.(\lambda xy.y) uv = \lambda ab.b$}
+  \end{prooftree}
+
+  Therefore $\lambda\beta \vdash \lambda uv.(\lambda xy.y) uv = \lambda ab.b$.
+
+\end{solution}
+
+\begin{problem}
+  \begin{parts}
+    \part\label{4.a}
+    Find a $\lambda$ term $s$ such that the equality $stu = ut$ holds in
+    $\lambda\beta$ for all terms $t$ and $u$.
+    \part\label{4.b}
+    Show that there is a $\lambda$ term $s$ such that for all term $t$,
+    $\lambda\beta \vdash st = ss$.
+  \end{parts}
+\end{problem}
+
+\begin{solution}
+
+  \ref{4.a}
+  Let $s = \lambda xy.yx$, then
+
+  \begin{align*}
+    stu & = (\lambda xy.yx)tu \\
+    & = (\lambda x.(\lambda y.yx))tu \\
+    & = (\lambda y.yx)[t/x]u \\
+    & = (\lambda y.yt)u \\
+    & = yt[u/y] \\
+    & = ut.
+  \end{align*}
+
+  Therefore $stu = ut$ holds in $\lambda\beta$ for all terms $t$ and $u$,
+  and thus $s = \lambda xy.yx$ is what we want.
+
+  \ref{4.b}
+  If $s = \lambda x.ss$, then for all term $t$,
+
+  \begin{equation*}
+    \lambda\beta \vdash st = (\lambda x.ss)t = ss[t/x] = ss.
+  \end{equation*}
+
+  So we need to solve the equation $s = \lambda x.ss$,
+  and it is a fixed point of the function
+
+  \begin{equation*}
+    f = \lambda yx.yy,
+  \end{equation*}
+
+  because $fs = (\lambda yx.yy)s = (\lambda x.yy)[s/y] = \lambda x.ss = s$.
+  Using the Y combinator, we can construct one possible answer:
+
+  \begin{align*}
+    s & = \mathbf{y}f \\
+    & = (\lambda u. f(uu))(\lambda u. f(uu)) \\
+    & = (\lambda u. (\lambda yx.yy)(uu))(\lambda u. (\lambda yx.yy)(uu)).
+  \end{align*}
+
+\end{solution}
+
+\begin{problem}
+  Show that there is a term $G$ such that all fixed-point combinators can be
+  \emph{characterized} as the fixed points of $G$.
+  That is, $s$ is a fixed-point combinator if and only if
+  $\lambda\beta \vdash G s = s$.
+\end{problem}
+
+\begin{solution}
+
+  Let $G = \lambda yx.x(yx)$.
+
+  Suppose $s$ is a fixed-point combinator,
+  then the equation $sf = f(sf)$ holds for all terms $f$.
+  If we bind $f$ as $\lambda x$, $s$ satisfies the equation $s = \lambda x.x(sx)$.
+  And we can verify that
+
+  \begin{align*}
+    Gs & = (\lambda yx.x(yx))s \\
+    & = (\lambda x.x(yx))[s/y] \\
+    & = \lambda x.x(sx) \\
+    & = s.
+  \end{align*}
+
+  On the other hand, suppose $G s = s$, then
+
+  \begin{align*}
+    s & = G s \\
+    & = ((\lambda yx).x(yx))s \\
+    & = (\lambda x.x(yx))[s/y] \\
+    & = \lambda x.x(sx).
+  \end{align*}
+
+  Hence for all terms $f$,
+  $sf = (\lambda x.x(sx))f = x(sx)[f/x] = f(sf)$.
+  That is, $s$ is a fixed-point combinator.
+
+  QED.
+
+\end{solution}
+
+\end{document}
