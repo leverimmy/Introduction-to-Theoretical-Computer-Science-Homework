@@ -1,0 +1,262 @@
+\documentclass{homework}
+\usepackage{bussproofs}
+\EnableBpAbbreviations
+\usepackage{ctex}
+
+\name{熊泽恩} % Replace (Student Name) with your name.
+\id{2022011223}
+\term{2024 Spring}
+\course{Introduction to Theoretical Computer Science}
+\hwnum{2}
+
+%\hwname{(Name)}          % Uncomment and replace (Name) with the type of the
+                          % homework (e.g, Assignment, Problem Set, etc.) if you
+                          % don't want the document to be labeled as "Homework."
+%\problemname{(Name)}     % Uncomment and replace (Name) with the desired label
+                          % for problems created with the problem environment.
+%\solutionname{(Name)}    % Uncomment and replace (Name) with the desired label
+                          % for solutions created with the solution environment.
+
+% Load any other packages you need here.
+
+\begin{document}
+
+\begin{problem}
+  Find $\lambda$ terms representing the logical $\mathrm{or}$ and $\mathrm{not}$
+  functions.
+\end{problem}
+
+\begin{solution}
+
+  $\mathbf{or} \equiv \lambda xy.x\mathbf{t}y$, for
+  \begin{align*}
+    \mathbf{or}\, \mathbf{t}\,\mathbf{t} &\betareds \mathbf{t}\,\mathbf{t}\,\mathbf{t} \betareds \mathbf{t},\\
+    \mathbf{or}\, \mathbf{t}\,\mathbf{f} &\betareds \mathbf{t}\,\mathbf{t}\,\mathbf{f} \betareds \mathbf{t},\\
+    \mathbf{or}\, \mathbf{f}\,\mathbf{t} &\betareds \mathbf{f}\,\mathbf{t}\,\mathbf{t} \betareds \mathbf{t},\\
+    \mathbf{or}\, \mathbf{f}\,\mathbf{f} &\betareds \mathbf{f}\,\mathbf{t}\,\mathbf{f} \betareds \mathbf{f}.
+  \end{align*}
+
+  $\mathbf{not} \equiv \lambda x.x\mathbf{f}\mathbf{t}$, for
+  \begin{align*}
+    \mathbf{not}\, \mathbf{t} &\betareds \mathbf{t}\,\mathbf{f}\,\mathbf{t} \betareds \mathbf{f},\\
+    \mathbf{not}\, \mathbf{f} &\betareds \mathbf{f}\,\mathbf{f}\,\mathbf{t} \betareds \mathbf{t}.
+  \end{align*}
+
+\end{solution}
+
+\begin{problem}
+  Prove that
+  \begin{parts}
+    \part\label{2.a}
+    $\mathbf{add}\, \church{m}\, \church{n} \betareds \church{m+n}$.
+    \part\label{2.b}
+    $\mathbf{mult}\, \church{m}\, \church{n} \betareds \church{m\cdot n}$.
+  \end{parts}
+\end{problem}
+
+\begin{solution}
+  
+    \ref{2.a} We have
+
+    \begin{align*}
+      \mathbf{add}\, \church{m}\, \church{n} &\equiv (\lambda nmfx.nf(mfx))\church{m}\,\church{n} \\
+      &\betareds \lambda fx.\church{m}f(\church{n}fx) \\
+      &\betareds \lambda fx.\church{m}f(f^{n}x) \\
+      &\betareds \lambda fx.f^{m}(f^{n}x) \\
+      &\betareds \lambda fx.f^{m+n}x \\
+      &\equiv \church{m+n}.
+    \end{align*}
+  
+    \ref{2.b} We have
+
+    \begin{align*}
+      \mathbf{mult}\, \church{m}\, \church{n} &\equiv (\lambda nmf.n(mf))\church{m}\,\church{n} \\
+      &\betareds \lambda f.\church{m}(\church{n}f) \\
+      &\betareds \lambda f.\church{m}(\lambda y.f^n y)^m \\
+      &\betareds \lambda fx.(\lambda y.f^n y)^m x \\
+      &\betareds \lambda fx.f^{m\cdot n}x \\
+      &\equiv \church{m\cdot n}.
+    \end{align*}
+
+\end{solution}
+
+\begin{problem}
+  Compute the \(\beta\)-normal forms of the following terms.
+  Are they strongly normalizable?
+  \begin{parts}
+    \part\label{3.a}
+    $(\lambda xy.yx)((\lambda x.xx)(\lambda x.xx))(\lambda xy.y)$.
+    \part\label{3.b}
+    $(\lambda xy.yx)(\mathbf{k} \mathbf{k})(\lambda x.xx)$.
+  \end{parts}
+\end{problem}
+
+\begin{solution}
+
+  \ref{3.a} We have
+
+  \begin{align*}
+    (\lambda xy.yx)((\lambda x.xx)(\lambda x.xx))(\lambda xy.y) &\betareds (\lambda xy.y)((\lambda x.xx)(\lambda x.xx)) \\
+    &\betareds \lambda y.y.
+  \end{align*}
+
+  But it is not strongly normalizable, since the term $(\lambda x.xx)(\lambda x.xx)$ has no \(\beta\)-normal form.
+
+  \ref{3.b} We have
+
+  \begin{align*}
+    (\lambda xy.yx)(\mathbf{k} \mathbf{k})(\lambda x.xx) &\betareds (\lambda x.xx)(\mathbf{k}\mathbf{k}) \\
+    &\betareds (\mathbf{k}\mathbf{k})(\mathbf{k}\mathbf{k}) \\
+    &\betareds \mathbf{k}.
+  \end{align*}
+
+  And it is strongly normalizable,
+  since any means of reduction will eventually lead to the \(\beta\)-normal form $\mathbf{k}$.
+
+\end{solution}
+
+\begin{problem}
+  Find a representation of the following functions on integers
+  \begin{parts}
+    \part\label{4.a}
+    $f(n) = \begin{cases}\; \text{true} & n \text{ is even},\\
+              \; \text{false} & n \text{ is odd}. \end{cases}$
+    \part\label{4.b}
+    $\exp(n,m) = n^m$.
+    \part\label{4.c}
+    $\mathrm{pred}(n) = \begin{cases}\; 0 & \text{ if } n = 0,\\
+                          \; n-1 & \text{ otherwise.} \end{cases}$ (Hard)
+  \end{parts}
+\end{problem}
+
+\begin{solution}
+
+  \ref{4.a} Let $\mathbf{xor}$ be the logical exclusive or function,
+  
+  \begin{equation*}
+  \mathbf{xor} \equiv \lambda xy.x\,(\mathbf{not}\, y)\, y.
+  \end{equation*}
+
+  Then we have a recursive definition of $f$ as follows,
+
+  \begin{equation*}
+    f(n)  = \begin{cases}\; \text{true} & \text{ if } n = 0,\\
+              \; f(n-1)\, \mathbf{xor}\, \text{true} & \text{ otherwise.}\end{cases}
+  \end{equation*}
+
+  So, we have
+  
+  \begin{align*}
+    f := (\lambda g.\lambda n.\mathbf{ite}\, & (\mathbf{iszero}\, n)\, \mathbf{f} \\
+    & (\mathbf{xor}\, \mathbf{t}\,(g (\mathbf{pred}\, n))))\,f
+  \end{align*}
+
+  By using the Y combinator, we have
+  
+  \begin{align*}
+    f := \mathbf{y}(\lambda g.\lambda n.\mathbf{ite}\, & (\mathbf{iszero}\, n) \mathbf{t} \\
+    & (\mathbf{xor}\, \mathbf{t}\,(g (\mathbf{pred}\, n)))).
+  \end{align*}
+
+  \ref{4.b} A resucsive definition of the exponential function is as follows,
+
+  \begin{equation*}
+    \exp(n,m) = \begin{cases}\; 1 & \text{ if } m = 0,\\
+              \; n\cdot \exp(n,m-1) & \text{ otherwise.}\end{cases}
+  \end{equation*}
+
+  So, we have
+  
+  \begin{align*}
+    \mathbf{exp} := (\lambda f.\lambda nm. \mathbf{ite}\, & (\mathbf{iszero}\, m)\, \church{1} \\
+    & (\mathbf{mult}\, n\, (f\, n\, (\mathbf{pred}\, m) )))\, \mathbf{exp}
+  \end{align*}
+
+  By using the Y combinator, we have
+
+  \begin{align*}
+    \mathbf{exp} := \mathbf{y}(\lambda f.\lambda nm. \mathbf{ite}\, & (\mathbf{iszero}\, m)\, \church{1} \\
+    & (\mathbf{mult}\, n\, (f\, n\, (\mathbf{pred}\, m) )))
+  \end{align*}
+
+  \ref{4.c} The predecessor function is defined as follows,
+
+  \begin{equation*}
+    \mathbf{pred} := \lambda n.\lambda f.\lambda x.n(\lambda g.\lambda h.h(gf))(\lambda u.x)(\lambda u.u).
+  \end{equation*}
+
+  We can verify that by the following computation,
+
+  \begin{align*}
+    \mathbf{pred}\, \church{m} &\betareds \lambda f.\lambda x.\church{m}(\lambda g.\lambda h.h(gf))(\lambda u.x)(\lambda u.u) \\
+    &\betareds \lambda f.\lambda x.(\lambda g.\lambda h.h(gf))^m(\lambda u.x)(\lambda u.u) \\
+    &\betareds \lambda f.\lambda x.(\lambda g.\lambda h.h(gf))^{m-1}(\lambda h.h((\lambda u.x) f))(\lambda u.u) \\
+    &\betareds \lambda f.\lambda x.(\lambda g.\lambda h.h(gf))^{m-1}(\lambda h.hx)(\lambda u.u) \\
+    &\betareds \lambda f.\lambda x.(\lambda g.\lambda h.h(gf))^{m-2}(\lambda h.h((\lambda h'.h'x)f))(\lambda u.u) \\
+    &\betareds \lambda f.\lambda x.(\lambda g.\lambda h.h(gf))^{m-2}(\lambda h.hfx)(\lambda u.u) \\
+    &\betareds \cdots \\
+    &\betareds \lambda f.\lambda x.(\lambda h.hf^{m-1}x)(\lambda u.u) \\
+    &\betareds \lambda f.\lambda x.f^{m-1}x \\
+    &\equiv \church{m-1}.
+  \end{align*}
+
+\end{solution}
+
+\begin{problem}
+  Suppose two binary relations $\red_{1}$ and $\red_{2}$ \emph{commute},
+  that is, $s \red_{1} t_{1}$ and $s \red_{2} t_{2}$ implies that there exists
+  $t$ such that $t_{1} \red_{2} t$ and $t_{2} \red_{1} t$.
+  Let $\red_{12}$ be the union of $\red_{1}$ and $\red_{2}$.
+  Prove that if $\red_{1}$ and $\red_{2}$ satisfy the diamond property, then so
+  is $\reds_{12}$.
+\end{problem}
+
+\begin{solution}
+
+  Let's define an auxilliary function $\mathbf{edge}(s, t)$
+  to indicate the particular type of relation that leads from $s$ to $t$,
+  as follows,
+
+  \begin{equation*}
+    \mathbf{edge}(s, t):= \begin{cases}
+      1 & \text{if } s \red_{1} t,\\
+      2 & \text{if } s \red_{2} t.
+    \end{cases}
+  \end{equation*}
+
+  Consider the fundamental example that
+  some states $s, u, v$ satisfy $s \red_{12} u$ and $s \red_{12} v$.
+  
+  \begin{enumerate}
+    \item If $\mathbf{edge}(s, u) = 1$ and $\mathbf{edge}(s, v) = 1$,
+    then because of the diamond property of $\red_{1}$,
+    we can find a state $t$ such that $u \red_{1} x$ and $v \red_{1} t$.
+    \item If $\mathbf{edge}(s, u) = 2$ and $\mathbf{edge}(s, v) = 2$, 
+    then because of the diamond property of $\red_{2}$,
+    we can find a state $t$ such that $u \red_{2} t$ and $v \red_{2} t$.
+    \item If $\mathbf{edge}(s, u) = 1$ and $\mathbf{edge}(s, v) = 2$,
+    then by the commutativity of $\red_{1}$ and $\red_{2}$,
+    we can find a state $t$ such that $u \red_{2} t$ and $v \red_{1} t$.
+    \item If $\mathbf{edge}(s, u) = 2$ and $\mathbf{edge}(s, v) = 1$,
+    then by the commutativity of $\red_{1}$ and $\red_{2}$,
+    we can find a state $t$ such that $u \red_{1} t$ and $v \red_{2} t$.
+  \end{enumerate}
+
+  So a state $t$ such that $u \red_{12} t$ and $v \red_{12} t$ always exists,
+  which implies that $\red_{12}$ sastisfies the diamond property.
+  As a result, $\reds_{12}$ also satisfies the diamond property.
+
+\end{solution}
+
+\begin{problem}
+  (Optional) Write an algorithm computing the factorial function in Python
+  without using explicit recursion.
+  Sample codes are provided in \textsf{lambda.py}.
+  Note that the use of parenthesis in Python for function application is
+  different from the mathematical way.
+  For example, the term $xyz$ used in classes as an abbreviation for $((xy)z)$
+  should be written as $x(y)(z)$ in Python in order to be consistent with the
+  Python function call convention.
+\end{problem}
+
+\end{document}
