@@ -1,0 +1,189 @@
+\documentclass{homework}
+\usepackage{bussproofs}
+\EnableBpAbbreviations
+\usepackage{ctex}
+
+\name{熊泽恩} % Replace (Student Name) with your name.
+\id{2022011223}
+\term{2024 Spring}
+\course{Introduction to Theoretical Computer Science}
+\hwnum{3}
+
+%\hwname{(Name)}          % Uncomment and replace (Name) with the type of the
+                          % homework (e.g, Assignment, Problem Set, etc.) if you
+                          % don't want the document to be labeled as "Homework."
+%\problemname{(Name)}     % Uncomment and replace (Name) with the desired label
+                          % for problems created with the problem environment.
+%\solutionname{(Name)}    % Uncomment and replace (Name) with the desired label
+                          % for solutions created with the solution environment.
+
+% Load any other packages you need here.
+
+\begin{document}
+
+\begin{problem}
+  Prove that if terms $a_{1}, a_{2}, \ldots a_{n}$ are in formal form, then so
+  is the list $a_{1} :: a_{2} :: \cdots a_{n} :: \mathbf{nil}$.
+\end{problem}
+
+\begin{solution}
+
+  Let's prove a stronger statement:
+  if terms $a_{1}, a_{2}, \ldots a_{n}$ are in formal form,
+  then so is the list $a_{1} :: a_{2} :: \cdots a_{n-1} :: a_{n}$.
+
+  We can prove this by induction on $n$.
+  When $n = 1$, the list is $a_{1}$, which is in formal form.
+  When $n = 2$, the list is $a_{1} :: a_{2} \equiv \lambda x.xa_1a_2$,
+  which is in formal form because you can not perform \(\beta\)-reduction on this term.
+ 
+  Suppose that the list $a_{1} :: a_{2} :: \cdots a_{n-1}$ is in formal form.
+  Then the list $a_{1} :: a_{2} :: \cdots a_{n-1} :: a_{n}$ could be treated as
+  $a_1:: t$ where $t \equiv a_{2} :: \cdots a_{n-1} :: a_{n}$.
+  From the induction hypothesis,
+  we know that $t$ is in formal form because it only has $n-1$ elements.
+  And we know that $a_1$ is in formal form.
+  So $a_1::t$ is in formal form.
+
+  Therefore, for all ,the list $a_{1} :: a_{2} :: \cdots a_{n-1} :: a_{n}$ is in formal form.
+  Make the substitutions $n \gets n + 1$ and $a_{n+1} \gets \mathbf{nil}$,
+  we can get the original statement.
+
+\end{solution}
+
+\begin{problem}
+  Show that $\mathbf{filter}$ is a special case of $\mathbf{reduce}$ for
+  $\mathbf{filter}$ and $\mathbf{reduce}$ defined in the class.
+\end{problem}
+
+\begin{solution}
+
+  The $\mathbf{filter}$ function keeps the elements that satisfy the condition,
+  and deprecates the elements that do not satisfy the condition.
+  We can define the $\mathbf{filter}$ function as follows:
+
+  \begin{equation*}
+    \mathbf{filter} \equiv \lambda lf. \mathbf{reduce}\, l\,
+    (\lambda ab. \mathbf{ite}\, f (\mathbf{cons}\, a \, b)\, b)\, \mathbf{nil}.
+  \end{equation*}
+
+  And $l$ is a list, $f$ is a function that
+  takes an element and returns a boolean value to indicate
+  whether the element satisfies the condition.
+
+  A verification of the correctness of the definition is as follows:
+
+  \begin{align*}
+    \mathbf{filter}\, \mathbf{nil}\, f & \betareds \mathbf{reduce}\, \mathbf{nil}\, (\lambda ab. \mathbf{ite}\, f (\mathbf{cons}\, a \, b)\, b)\, \mathbf{nil} \\
+    & \betareds \mathbf{nil}.
+  \end{align*}
+
+  \begin{align*}
+    \mathbf{filter}\, (h::t)\, f & \betareds \mathbf{reduce}\, (h::t)\, (\lambda ab. \mathbf{ite}\, f (\mathbf{cons}\, a \, b)\, b)\, \mathbf{nil} \\
+    & \betareds \mathbf{ite}\, f\, (\mathbf{cons}\, h\, \mathbf{reduce}\, (\lambda ab. \mathbf{ite}\, f (\mathbf{cons}\, a \, b)\, b)\, t\, \mathbf{nil}) \\
+    & \qquad\qquad (\mathbf{reduce}\, (\lambda ab. \mathbf{ite}\, f (\mathbf{cons}\, a \, b)\, b)\, t\, \mathbf{nil}) \\
+    & \betareds \mathbf{ite}\, f\, (\mathbf{cons}\, h\, (\mathbf{filter}\, t\, f))\, (\mathbf{filter}\, t\, f).
+  \end{align*}
+
+\end{solution}
+
+\begin{problem}
+  Let $F : {\{0,1\}}^{n} \to \{0,1\}$ be a Boolean function.
+  Prove that there is a $\lambda$ term $f$ representing $F$ in the sense that
+  for all $x_{1}, x_{2}, \ldots, x_{n} \in \{0,1\}$,
+  \begin{equation*}
+    f [x_{1}] [x_{2}] \cdots [x_{n}] \betareds [F(x_{1}, x_{2}, \ldots, x_{n})],
+  \end{equation*}
+  where $[0] \equiv \mathbf{f}$ and $[1] \equiv \mathbf{t}$.
+\end{problem}
+
+\begin{solution}
+
+  First of all, simplify the function $F$ into its full disjunctive normal form $F'$.
+  As a result, we obtain a new function $F'$, which is equivalent to $F$.
+
+  $F'$ has the following form:
+  \begin{equation*}
+    F'(x_1, x_2, \ldots, x_n) = \bigvee_{i=1}^{t}m_i,
+  \end{equation*}
+  where $m_i$ is a intersection of literals,
+  and each literal is a variable or its negation,
+  and $t$ is the number of terms in the disjunctive normal form.
+
+  So we define the $\lambda$ term $\mu_i$ as follows:
+  \begin{equation*}
+    \mu_i \equiv \mathbf{and}\, y_{j_1}\, (\mathbf{and}\, y_{j_2}\, \cdots (\mathbf{and}\, y_{j_{n-1}}\, y_{j_n})),
+  \end{equation*}
+  where $y_{j_1}, y_{j_2}, \ldots, y_{j_n}$ are the lambda terms
+  to the variables
+  $x_{j_1}, x_{j_2}, \ldots, x_{j_n}$ in $m_i$.
+  Then we can define the $\lambda$ term $f$ as follows:
+  \begin{equation*}
+    f \equiv \lambda y_1y_2\cdots y_t. \mathbf{or}\, \mu_1\, (\mathbf{or}\, \mu_2\, \cdots (\mathbf{or}\, \mu_{t-1}\, \mu_{t})).
+  \end{equation*}
+  
+  Therefore, we can prove that for all $x_{1}, x_{2}, \ldots, x_{n} \in \{0,1\}$,
+  there always exists a $\lambda$ term $f$ representing $F$ in the sense that
+  \begin{equation*}
+    f [x_{1}] [x_{2}] \cdots [x_{n}] \betareds [F(x_{1}, x_{2}, \ldots, x_{n})],
+  \end{equation*}
+  simply because we've given the algorithm to construct such a $\lambda$ term $f$.
+
+  In short, $f = \lambda y_1y_2\ldots y_{n}.g$ is the resulting $\lambda$ term,
+  where $g$ is the Boolean function that substitutes $\land$ with $\mathbf{and}$,
+  $\lor$ with $\mathbf{or}$ in the Polish notation of the disjunctive normal form of $F$.
+
+\end{solution}
+
+\begin{problem}
+  Let $C \subseteq \Sigma^{*}$ be a language.
+  Prove that $C$ is Turing-recognizable if and only if there is a decidable language $D$
+  such that
+  \begin{equation*}
+    C = \{ x \mid \exists y \text{ such that } \tuple{x,y} \in D\}.
+  \end{equation*}
+\end{problem}
+
+\begin{solution}
+
+  Suppose that $C$ is Turing-recognizable.
+  Then there exists a Turing Machine $M$ that recognizes $C$.
+  We can construct a decidable language $D$ consisting of all pairs $\tuple{x,y}$,
+  where $x$ is the input of $M$ and $y$ is a possible computation path that
+  $M$ performs on input $x$.
+  Now, we can see that $C = \{ x \mid \exists y \text{ such that } \tuple{x,y} \in D\}$,
+  because if an input $x$ is accepted by $M$,
+  there exists a computation path $y$; otherwise, there is no such $y$.
+  Additionally, $D$ is decidable because we can construct a decider $N$
+  which accepts $\tuple{x,y}$ if $x$ is accepted by $M$,
+  and rejects $\tuple{x,y}$ when either $x$ is rejected by $M$
+  or $M$ does not halt within steps of the length of $y$.
+
+  Hence, there is a decidable language $D$, such that
+  $C = \{ x \mid \exists y \text{ such that } \tuple{x,y} \in D\}$.
+
+  On the other hand, suppose that there is a decidable language $D$
+  such that $C = \{ x \mid \exists y \text{ such that } \tuple{x,y} \in D\}$.
+  Consider the Turing Machine $N$ which decides $D$.
+  Select all the states(denoted by a set $\{q_i\}$) of $N$
+  which are reachable from the start state,
+  satisfying the condition that the edge pointing towards their successive states
+  is labeled with the separation symbol `,'.
+  Also, select all the states(denoted by a set $\{p_i\}$) of $N$
+  which are the states on the paths that lead to the states in $\{q_i\}$.
+  Then we can construct a new Turing Machine $M$ which decides $C$,
+  by including all the states in $\{p_i\}$ and $\{q_i\}$ as the states in $M$,
+  and all the transitions in $N$ between them as the transitions in $M$,
+  and selecting all the states in $\{q_i\}$ as the accepting states of $M$,
+  and the start state of $N$ as the start state of $M$.
+
+  Therefore, $C$ is Turing-recognizable,
+  for we have constructed a Turing Machine $M$ which decides $C$.
+
+  In conclusion,
+  $C$ is Turing-recognizable if and only if there is a decidable language $D$
+  such that $C = \{ x \mid \exists y \text{ such that } \tuple{x,y} \in D\}$.
+
+\end{solution}
+
+\end{document}
