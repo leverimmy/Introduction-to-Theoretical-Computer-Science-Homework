@@ -1,0 +1,202 @@
+\documentclass{homework}
+\usepackage{bussproofs}
+\EnableBpAbbreviations
+\usepackage{ctex}
+
+\name{熊泽恩} % Replace (Student Name) with your name.
+\id{2022011223}
+\term{2024 Spring}
+\course{Introduction to Theoretical Computer Science}
+\hwnum{4}
+
+%\hwname{(Name)}          % Uncomment and replace (Name) with the type of the
+                          % homework (e.g, Assignment, Problem Set, etc.) if you
+                          % don't want the document to be labeled as "Homework."
+%\problemname{(Name)}     % Uncomment and replace (Name) with the desired label
+                          % for problems created with the problem environment.
+%\solutionname{(Name)}    % Uncomment and replace (Name) with the desired label
+                          % for solutions created with the solution environment.
+
+% Load any other packages you need here.
+
+\begin{document}
+
+\begin{problem}
+  Give a model for the sentence
+  \begin{equation*}
+    \begin{split}
+      \phi_{\mathrm{lt}}
+      & = \forall x\, [R_{1}(x, x)]\\
+      & \; \land \forall x,y\, [R_{1}(x,y) \leftrightarrow R_{1}(y,x)]\\
+      & \; \land \forall x,y,z\, [(R_{1}(x,y) \land R_{1}(y,z))
+        \rightarrow R_{1}(x,z)]\\
+      & \; \land \forall x,y\, [R_{1}(x,y) \rightarrow \neg R_{2}(x,y)]\\
+      & \; \land \forall x,y\, [\neg R_{1}(x,y) \rightarrow (R_{2}(x,y)
+        \oplus R_{2}(y,x))]\\
+      & \; \land \forall x,y,z\, [(R_{2}(x,y) \land R_{2}(y,z))
+        \rightarrow R_{2}(x,z)]\\
+      & \; \land \forall x \exists y [ R_{2}(x,y) ].
+    \end{split}
+  \end{equation*}
+
+\end{problem}
+
+\begin{solution}
+
+  We describe the model $\mathcal{U}$ as follows:
+  \begin{enumerate}
+    \item The universe of $\mathcal{U}$ is an infinite set $U$,
+          with a certain partial order $R$ defined on it,
+          and any of its subset has no maximum element.
+    \item There are two predicates: $R_1$ and $R_2$.
+          We assign a binary relation $R_1^{\mathcal{U}}$
+          and a binary relation $R_2^{\mathcal{U}}$ to them respectively.
+          Both $R_1^{\mathcal{U}}$ and $R_2^{\mathcal{U}}$ belong to $\mathcal{U}$,
+          and are denoted and defined as follows: for all $x, y \in U$,
+          \begin{align*}
+            xR_1^{\mathcal{U}}y \iff x =_R y \iff xRy \land yRx, \\
+            xR_2^{\mathcal{U}}y \iff x <_R y \iff \lnot(yRx).
+          \end{align*}
+  \end{enumerate}
+
+  Therefore, the model $\mathcal{U}$ satisfies $\phi_{\mathrm{lt}}$,
+  because we can verify as follows:
+  \begin{enumerate}
+    \item For all $x \in U$, $x =_R x$ holds.
+    \item For all $x, y \in U$, $x =_R y$ if and only if $y =_R x$.
+    \item For all $x, y, z \in U$, if $x =_R y$ and $y =_R z$, then $x =_R z$.
+    \item For all $x, y \in U$, if $x =_R y$, then $x <_R y$ does not hold.
+    \item For all $x, y \in U$, if $x =_R y$ does not hold, then either $x <_R y$ or $y <_R x$.
+    \item For all $x, y, z \in U$, if $x <_R y$ and $y <_R z$, then $x <_R z$.
+    \item For all $x \in U$, there exists $y \in U$ such that $x <_R y$,
+          since any subset of $U$ has no maximum element.
+  \end{enumerate}
+
+\end{solution}
+
+\begin{problem}
+  Prove that the Halting problem with empty input
+  \begin{equation*}
+    \mathrm{HALT}_{\varepsilon} = \{ \desc{M} \mid M
+    \text{ halts on empty input.}\}
+  \end{equation*}
+  is undecidable.
+\end{problem}
+
+\begin{solution}
+
+  We prove it by contradiction.
+  Suppose that $\mathrm{HALT}_{\varepsilon}$ is decidable,
+  then there exists a Turing machine $H$ that decides $\mathrm{HALT}_{\varepsilon}$.
+  Construct a new Turing machine $D$ as follows:
+  \begin{enumerate}
+    \item Obtain its own description $\desc{D}$ by recursion theorem.
+    \item Run $H$ on input $\desc{D}$.
+    \item If $H$ accepts, then loop; otherwise, halt.
+  \end{enumerate}
+
+  You can see that $D$ halts on empty input
+  if and only if $H$ accepts $\desc{D}$,
+  which leads to $D$ looping at step 3,
+  meaning $D$ does not halt on empty input.
+  This is a contradiction and thus
+  $\mathrm{HALT}_{\varepsilon}$ is undecidable.
+
+\end{solution}
+
+\begin{problem}
+  Show that any infinite subset of $\mathrm{MIN}_{\text{TM}}$ is not
+  Turing-recognizable where $\mathrm{MIN}_{\text{TM}}$ is a language defined in
+  the class.
+\end{problem}
+
+\begin{solution}
+
+  We prove it by contradiction.
+  Suppose that there is an infinite subset
+  $\mathrm{SMIN}_{\text{TM}}$ of $\mathrm{MIN}_{\text{TM}}$
+  that is Turing-recognizable,
+  then there exists a Turing machine $E$ that
+  enumerates $\mathrm{SMIN}_{\text{TM}}$.
+  We construct the following Turing machine $C$:
+  \begin{enumerate}
+    \item Obtain its own description $\desc{C}$ by recursion theorem.
+    \item Run the enumerator $E$ until machine $D$ appears with
+          a longer description than $\desc{C}$.
+    \item Simulates $D$ on input $w$.
+  \end{enumerate}
+
+  Because $\mathrm{SMIN}_{\text{TM}}$ is infinite,
+  $E$'s list must contain a longer description than $\desc{C}$.
+  Therefore, $C$ eventually terminates at step 2
+  with some machine $D$ that has a longer description.
+  And $C$ simulates $D$ on input $w$, so they are equivalent.
+  Because $C$ is shorter than $D$ and is equivalent to it,
+  so $D$ cannot be minimal; but $D$ appears on $E$'s list.
+
+  This is a contradiction and thus $\mathrm{SMIN}_{\text{TM}}$ is not Turing-recognizable.
+
+\end{solution}
+
+% \begin{problem}
+%   Let $S = \bigl\{ \desc{M} \mid M \text{ is a TM and } L(M) = \{\desc{M}\} \bigr\}$.
+%   Prove that neither $S$ nor the complement of $S$ is Turing-recognizable.
+% \end{problem}
+
+% \begin{solution}
+
+% \end{solution}
+
+\begin{problem}
+  \begin{parts}
+    \part\label{smn}
+    Prove a special case of the S-m-n theorem, the Currying
+    technique for Turing machines.
+    That is, show that there is a computable function
+    $S_{1}^{1} : \Sigma^{*} \times \Sigma^{*} \to \Sigma^{*}$ mapping the
+    description of Turing machine $T$ and input $x$ to the description of a
+    Turing machine $S$ such that (1) $S$ on input $y$ computes the same output
+    as $T$ on input $\tuple{x, y}$ if $T$ halts; and (2) $S$ loops on input $y$
+    if $T$ loops on input $\tuple{x, y}$.
+    \part\label{srt}
+    Prove Kleene's recursion theorem by \cref{smn} and Roger's fixed-point
+    theorem.
+  \end{parts}
+\end{problem}
+
+\begin{solution}
+
+  \ref{smn} Given a Turing machine $T$ and an input $x$,
+  we can construct a Turing machine $S$ that $S_1^1(\desc{T}, x) = S$
+  as follows:
+  \begin{enumerate}
+    \item On input $y$, $S$ simulates $T$ on input $\tuple{x, y}$.
+  \end{enumerate}
+
+  If the simulation of $T$ on input $\tuple{x, y}$ halts,
+  then $S$ halts and outputs the same result as $T$.
+  Otherwise, $S$ loops on input $y$ as well.
+  $S$ satisfies the requirements, and $S_1^1$ is a computable function.
+  Therefore the Currying technique is proved.
+
+  \ref{srt} Let $T$ be a Turing machine that computes a function
+  $t : \Sigma^* \times \Sigma^* \to \Sigma^*$. 
+  From \cref{smn},
+  we can construct a Turing machine $S_w = S_1^1(\desc{T}, w)$ that computes a function
+  $s_w : \Sigma^* \to \Sigma^*$,
+  such that $t(x, w) = s_w(x)$.
+
+  From Roger's fixed-point theorem,
+  since $s_w : \Sigma^* \to \Sigma^*$ is a computable
+  function, then there is a Turing machine $R$ for which
+  $s_w(\desc{R})$ describes a machine equivalent to $R$.
+  Note that $s_w(\desc{R}) = t(\desc{R}, w)$,
+  and $s_w$ is a function that implicitly relies on $w$,
+  so $s_w$ could be seen as a function of $w$, denoted as $r(w)$.
+
+  Therefore, we can construct a Turing machine $R$ that has a computing function
+  $r : \Sigma^* \to \Sigma^*$, such that for every $w$, $r(w) = t(\desc{R}, w)$.
+
+\end{solution}
+
+\end{document}
