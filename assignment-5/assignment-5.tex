@@ -1,0 +1,172 @@
+\documentclass{homework}
+\usepackage{bussproofs}
+\EnableBpAbbreviations
+\usepackage{ctex}
+
+\name{熊泽恩} % Replace (Student Name) with your name.
+\id{2022011223}
+\term{2024 Spring}
+\course{Introduction to Theoretical Computer Science}
+\hwnum{5}
+
+%\hwname{(Name)}          % Uncomment and replace (Name) with the type of the
+                          % homework (e.g, Assignment, Problem Set, etc.) if you
+                          % don't want the document to be labeled as "Homework."
+%\problemname{(Name)}     % Uncomment and replace (Name) with the desired label
+                          % for problems created with the problem environment.
+%\solutionname{(Name)}    % Uncomment and replace (Name) with the desired label
+                          % for solutions created with the solution environment.
+
+% Load any other packages you need here.
+
+\begin{document}
+
+\begin{problem}
+  Prove the following corollary of the time hierarchy theorem: for all constants
+  $c_1 > c_0 \ge 1$, $\TIME(n^{c_0}) \subsetneq \TIME(n^{c_1})$.
+\end{problem}
+
+\begin{solution}
+
+  First of all, we have the following lemma:
+  \begin{lemma}
+    For all constants $c_1 > c_0 \ge 1$, $n^{c_0} = o(n^{c_1}/\log n)$.
+  \end{lemma}
+  \begin{proof}
+    Since $c_1 > c_0 \ge 1$, we have
+    \begin{equation*}
+      \lim_{n \to \infty} \frac{n^{c_0}}{n^{c_1}/\log n}
+      = \lim_{n \to \infty} \frac{\log n}{n^{c_1 - c_0}}
+      = 0.
+    \end{equation*}
+    Therefore, $n^{c_0} = o(n^{c_1}/\log n)$.
+  \end{proof}
+  
+  From the hierarchy theorem,
+  we have $\TIME(o(n^{c_1}/\log(n^{c_1}))) \subsetneq \TIME(n^{c_1})$.
+  That is to say, $\TIME(o(n^{c_1}/\log n)) \subsetneq \TIME(n^{c_1})$.
+  $n^{c_0} = o(n^{c_1}/\log n)$ from the lemma above,
+  therefore, we have $\TIME(n^{c_0}) \subsetneq \TIME(n^{c_1})$.
+  
+\end{solution}
+
+\begin{problem}
+  \begin{parts}
+    \part\label{2a}
+    Show that $\P$ is closed under union, concatenation, and complement.
+    That is, $A \cup B, A \circ B, A^{\text{c}} \in \P$ if $A, B \in \P$.
+    Note that the concatenation $A \circ B$ of two languages $A$ and $B$ is
+    defined as
+    \begin{equation*}
+      A \circ B = \{ x y \mid x \in A, y \in B\}.
+    \end{equation*}
+    \part\label{2b}
+    Show that $\P$ is closed under the star operation.
+    That is, $A^{*} \in \P$ if $A \in \P$ where
+    $A^{*} = \{x_{1} x_{2} \cdots x_{k} \mid k \ge 0, x_{j} \in A \text{ for
+    } j=1, 2, \ldots, k\}$.
+    (Hint: You may need to use dynamic programming to maintain a table whose
+    $i,j$-th entry indicates whether $x_{i} \cdots x_{j} \in A^{*}$)
+  \end{parts}
+\end{problem}
+
+\begin{solution}
+
+  \ref{2a} The proof is as follows:
+
+  \begin{enumerate}
+    \item $A \cup B$ is in $\P$, because we can decide whether $x \in A \cup B$
+      by first checking whether $x \in A$ and then checking whether $x \in B$.
+      If either of them is true, then $x \in A \cup B$.
+      Since we can solve both $A$ and $B$ in polynomial time using deterministic
+      Turing machines, so first solving $A$ then $B$ consequently will also be
+      in polynomial time. Therefore, $A \cup B \in \P$.
+    \item $A \circ B$ is in $\P$, because we can decide whether $x \in A \circ B$ by
+      checking whether $x = yz$ where $y \in A$ and $z \in B$.
+      We can iterate $i$ from $0$ to $|x|$ and check whether $x[0 \ldots i-1] \in A$
+      and $x[i \ldots |x| - 1] \in B$.
+      Since we can solve both $A$ and $B$ in polynomial time using deterministic Turing machines,
+      $A \circ B \in \P$.
+    \item $A^{\text{c}}$ is in $\P$, because we can decide whether $x \in A^{\text{c}}$ by
+      by negating the result of $x \in A$. Since we can solve $A$ in polynomial time
+      using deterministic Turing machines, so solving $A^{\text{c}}$ will also be in
+      polynomial time. Therefore, $A^{\text{c}} \in \P$.
+  \end{enumerate}
+
+  \ref{2b} We can use dynamic programming to maintain a table whose $i,j$-th entry indicates
+  whether $x_{i} \cdots x_{j} \in A^{*}$.
+  The algorithm is as follows:
+  \begin{enumerate}
+    \item Initialize the table $T$ with $T_{i, i} = \begin{cases}
+      \text{true}, &\text{if } x_i \in A, \\
+      \text{false}, &\text{if } x_i \notin A \end{cases}$ for all $i$.
+    \item Iterate $l$ from $1$ to $|x|$.
+    \item Iterate $i$ from $1$ to $|x| - l$.
+    \item Set $j = i + l$.
+    \item Iterate $k$ from $i$ to $j - 1$.
+    \item Set $T_{i, j} = T_{i, j} \vee (T_{i, k} \wedge T_{k+1, j})$.
+    \item Check if $T_{1, |x|}$.
+          If it is true, then $x \in A^{*}$;
+          otherwise, $x \notin A^{*}$.
+  \end{enumerate}
+
+  The correctness of the algorithm is obvious, since $x \in A^*$
+  ensures a possible partition of $x$ into $x_1 \cdots x_k$ where
+  $x_i \in A$ for all $i$, and the algorithm will find such a partition;
+  and the algorithm will only find such $x$
+  because of the way the table is updated,
+  which ensures that $T_{i, j}$ is true
+  if and only if it can be partitioned into smaller segments
+  $x_i \cdots x_j \in A^*$.
+  Beside the initialization,
+  the time complexity of the algorithm is $O(n^{3})$,
+  where $n$ is the length of $x$.
+  And the initialization can be done in polynomial time
+  because $A$ is in $\P$.
+  Therefore, $A^{*} \in \P$.
+
+\end{solution}
+
+\begin{problem}
+  Karatsuba algorithm is an efficient algorithm for multiplying two natural
+  numbers of $n = 2^{k}$ bits, outperforming the straightforward $O(n^{2})$
+  primary-school method.
+  The key idea is as follows.
+  First, we write the numbers as $a 2^{\ell} + b$ and $c 2^{\ell} + d$ where
+  $\ell = n/2$ and $a, b, c, d \in \{0, 1, \ldots, 2^{\ell}-1\}$.
+  So the product is
+  \begin{equation*}
+    ac2^{2\ell} + (ad+bc) 2^{\ell} + bd,
+  \end{equation*}
+  and this reduces the computation of the product to four multiplications
+  ($ac, ad, bc, bd$) of shorter numbers.
+  Second, Karatsuba's key idea is that three multiplications suffice for the
+  computation as one can first compute $ac, bd$.
+  Then the coefficient in front of $2^{\ell}$ can be computed by one extra
+  multiplication as $ad+bc = (a+b)(c+d) - ac -bd$.
+  Show that Karatsuba's algorithm has time complexity
+  $O(n^{\log_{2} 3}) \approx O(n^{1.585})$.
+\end{problem}
+
+\begin{solution}
+
+  Let $T(n)$ be the time complexity of Karatsuba's algorithm for multiplying two
+  $n$-bit numbers. The problem is divided into three subproblems,
+  which involve multiplying three pairs of numbers of
+  the size $\left\lceil n/2\right\rceil$.
+  In addition, the time complexity of the `conquer' part is linear to $n$,
+  since the additions, subtractions,
+  and digit shifts can be done in linear time.
+  Then we have the following recurrence relation:
+  \begin{equation*}
+    T(n) = 3T(\left\lceil n/2\right\rceil) + O(n).
+  \end{equation*}
+  
+  From the master theorem, we have $a = 3, b = 2, f(n) = O(n)$, and
+  $n^{\log_{b} a} = n^{\log_{2} 3} \approx n^{1.585}$.
+  Since $f(n) = O(n) = O(n^{\log_{2} 3-\epsilon})$ for some $\epsilon > 0$,
+  we have $T(n) = O(n^{\log_{2} 3}) \approx O(n^{1.585})$.
+
+\end{solution}
+
+\end{document}
