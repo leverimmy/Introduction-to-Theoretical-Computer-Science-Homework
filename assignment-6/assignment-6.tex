@@ -1,0 +1,144 @@
+\documentclass{homework}
+\usepackage{bussproofs}
+\EnableBpAbbreviations
+\usepackage{ctex, hyperref}
+\hypersetup{hidelinks,
+	colorlinks=true,
+	allcolors=blue,
+	pdfstartview=Fit,
+	breaklinks=true
+}
+
+\name{熊泽恩} % Replace (Student Name) with your name.
+\id{2022011223}
+\term{2024 Spring}
+\course{Introduction to Theoretical Computer Science}
+\hwnum{6}
+
+%\hwname{(Name)}          % Uncomment and replace (Name) with the type of the
+                          % homework (e.g, Assignment, Problem Set, etc.) if you
+                          % don't want the document to be labeled as "Homework."
+%\problemname{(Name)}     % Uncomment and replace (Name) with the desired label
+                          % for problems created with the problem environment.
+%\solutionname{(Name)}    % Uncomment and replace (Name) with the desired label
+                          % for solutions created with the solution environment.
+
+% Load any other packages you need here.
+
+\begin{document}
+
+\begin{problem}
+  Prove that if $\P = \NP$, then $\NP = \coNP$.
+\end{problem}
+
+\begin{solution}
+
+  From the homework last week, we have proved that a problem $A \in \P \iff \overline{A} \in \P$.
+  From the definition, we have $\coNP = \{\overline{A} \mid A \in \NP\}$,
+  so if $\P = \NP$, then $\coNP = \{\overline{A} \mid A \in \P\}$.
+  And this results in $\coNP = \P = \NP$.
+
+\end{solution}
+
+\begin{problem}
+  For every $\TWOSAT$ instance $\varphi$ of $n$ variables, define graph
+  $G_{\varphi}$ of $2n$ vertices as follows.
+  For each variable $x_{i}$ in $\varphi$, $G_{\varphi}$ has two vertices labeled
+  by $x_{i}$ and $\neg x_{i}$ respectively.
+  There is a directed edge $\ell_{i} \to \ell_{j}$ if
+  $(\neg \ell_{i}) \lor \ell_{j}$ or $\ell_{j} \lor (\neg \ell_{i})$ is a clause
+  of $\varphi$.
+  For notational convenience, for literal $\ell_{i} = \neg x_{k_{i}}$,
+  $\neg \ell_{i}$ is defined to be $x_{k_{i}}$.
+  Prove that $\varphi$ is unsatisfiable if and only if there exist
+  paths from $x_{j}$ to $\neg x_{j}$ and from $\neg x_{j}$ to $x_{j}$ in
+  $G_{\varphi}$ for some $j$.
+  Use the above fact to show that $\TWOSAT \in \P$.
+\end{problem}
+
+\begin{solution}
+
+  Suppose $\varphi$ is unsatisfiable,
+  then for every assignment of variables,
+  there must be two chains of clauses that
+  coerce the assignment of $x_j$ to be true and false respectively.
+  For example,
+  \begin{equation*}
+    (\lnot x_j) \lor l_{k_1}, (\lnot l_{k_1}) \lor l_{k_2}, \cdots, (\lnot l_{k_{m-1}}) \lor (\lnot x_j),
+  \end{equation*}
+  and
+  \begin{equation*}
+    x_j \lor l_{p_1}, (\lnot l_{p_1}) \lor l_{p_2}, \cdots, (\lnot l_{p_{t-1}}) \lor x_j,
+  \end{equation*}
+  where $l_{k_i}$ and $l_{p_i}$ are variables $x_t$ or its negation $\lnot x_t$.
+  The former chain ensures that $x_j = \text{false}$,
+  and the latter chain ensures that $x_j = \text{true}$,
+  which leads to a contradiction so that $\varphi$ is unsatisfiable.
+  From the first chain, we can see that there must be an edge from $x_j$ to $l_{k_1}$,
+  from $l_{k_1}$ to $l_{k_2}$, $\cdots$, from $l_{k_{m-1}}$ to $\lnot x_j$,
+  forming a path from $x_j$ to $\lnot x_j$.
+  And from the second chain, we can see that there must be an edge from $\lnot x_j$ to $l_{p_1}$,
+  from $l_{p_1}$ to $l_{p_2}$, $\cdots$, from $l_{p_{t-1}}$ to $x_j$,
+  forming a path from $\lnot x_j$ to $x_j$.
+
+  Suppose there exist paths from $x_j$ to $\lnot x_j$ and from $\lnot x_j$ to $x_j$ in $G_{\varphi}$.
+  Note that the path from $x_j$ to $\lnot x_j$ ensures that $x_j = \text{false}$,
+  because of the following chain:
+  \begin{equation*}
+    (\lnot x_j) \lor l_{k_1}, (\lnot l_{k_1}) \lor l_{k_2}, \cdots, (\lnot l_{k_{m-1}}) \lor (\lnot x_j),
+  \end{equation*}
+  where $l_{k_i}$ is a variable $x_t$ or its negation $\lnot x_t$.
+  Similarly, the path from $\lnot x_j$ to $x_j$ ensures that $x_j = \text{true}$,
+  which is a contradiction.
+  Then $\varphi$ is unsatisfiable.
+
+  Therefore, $\varphi$ is unsatisfiable if and only if there exist paths from $x_{j}$ to $\neg x_{j}$ and from $\neg x_{j}$ to $x_{j}$ in $G_{\varphi}$ for some $j$.
+  It is easy to see that the existence of such paths can be checked in polynomial time,
+  for we can use breadth-first search, starting from a vertex $x_j$,
+  to find whether there is a path from $x_j$ to $\lnot x_j$ and vice versa.
+  Thus, $\TWOSAT \in \P$.
+
+\end{solution}
+
+\begin{problem}
+  The Lehmer's theorem states that a natural number $n$ is a prime number if and
+  only if the following two conditions hold:
+  \begin{enumerate}
+    \item There is number $a$ such that $a^{n-1} \equiv 1 \pmod{n}$.
+    \item For every prime factor $q$ of $n-1$, $a^{(n-1)/q} \not\equiv 1 \pmod{n}$.
+  \end{enumerate}
+  Use this theorem to show that $\PRIME \in \NP \cap \coNP$.
+  (Hint: To prove $\PRIME \in \NP$, you may need to use recursively defined
+  witness.)
+\end{problem}
+
+\begin{solution}
+
+  We first prove that $\PRIME \in \NP$.
+  Given a number $a$ and the prime factorization of $n-1$,
+  we can verify in polynomial time:
+  \begin{enumerate}
+    \item $a^{n - 1} \equiv 1 \pmod{n}$.
+      This is because we can calculate $a^{n-1} \mod n$ in $O(\log n)$ time
+      by \href{https://en.wikipedia.org/wiki/Exponentiation_by_squaring}{exponentiation by squaring}.
+    \item for every prime factor $q$ of $n-1$, $a^{(n-1)/q} \not\equiv 1 \pmod{n}$.
+      This is because we can calculate $a^{(n-1)/q} \mod n$ in $O(\log n)$ time
+      by \href{https://en.wikipedia.org/wiki/Exponentiation_by_squaring}{exponentiation by squaring},
+      Also, there are only $O(\sqrt{n})$ such factor $q$ for $n - 1$,
+      because factors appear in pairs.
+      If one of the factor is greater than $\sqrt{n - 1}$,
+      then the other one must be less than $\sqrt{n - 1}$.
+      And an upper bound of the number of factors that $n - 1$ have is $O(\sqrt{n})$,
+      because $n - 1$ can only have $\sqrt{n - 1}$ factors that are the `smaller ones.'
+  \end{enumerate}
+  Therefore, $\PRIME \in \NP$.
+
+  Then we prove that $\PRIME \in \coNP$. Suppose $n$ is not a prime number
+  and given $k$ where $k \mid n$, then we can verify this in polynomial time.
+  Therefore, $\PRIME \in \coNP$.
+
+  In conclusion, $\PRIME \in \NP \cap \coNP$.
+
+\end{solution}
+
+\end{document}
