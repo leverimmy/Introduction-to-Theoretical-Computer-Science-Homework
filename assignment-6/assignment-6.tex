@@ -116,14 +116,15 @@
 
   We first prove that $\PRIME \in \NP$.
   Given a number $a$ and the prime factorization of $n-1$,
-  we can verify in polynomial time:
+  set them as the witness pair $\left<a, \text{factorization}(n - 1)\right>$.
+  Then we can verify in polynomial time:
   \begin{enumerate}
     \item $a^{n - 1} \equiv 1 \pmod{n}$.
-      This is because we can calculate $a^{n-1} \mod n$ in $O(\log n)$ time
-      by \href{https://en.wikipedia.org/wiki/Exponentiation_by_squaring}{exponentiation by squaring}.
+      This is because we can calculate $a^{n-1} \mod n$ in $O(\log\log n)$ time
+      using \href{https://en.wikipedia.org/wiki/Exponentiation_by_squaring}{exponentiation by squaring}.
     \item for every prime factor $q$ of $n-1$, $a^{(n-1)/q} \not\equiv 1 \pmod{n}$.
-      This is because we can calculate $a^{(n-1)/q} \mod n$ in $O(\log n)$ time
-      by \href{https://en.wikipedia.org/wiki/Exponentiation_by_squaring}{exponentiation by squaring},
+      This is because we can calculate $a^{(n-1)/q} \mod n$ in $O(\log\log n)$ time
+      using \href{https://en.wikipedia.org/wiki/Exponentiation_by_squaring}{exponentiation by squaring},
       Also, there are only $O(\sqrt{n})$ such factor $q$ for $n - 1$,
       because factors appear in pairs.
       If one of the factor is greater than $\sqrt{n - 1}$,
@@ -131,6 +132,19 @@
       And an upper bound of the number of factors that $n - 1$ have is $O(\sqrt{n})$,
       because $n - 1$ can only have $\sqrt{n - 1}$ factors that are the `smaller ones.'
   \end{enumerate}
+  Factorize $n - 1$ as
+  \begin{equation*}
+    n - 1 = \prod_{i = 1}^k p_i^{\alpha_i}.
+  \end{equation*}
+  where $p_i$ are prime numbers and $\alpha_i$ are their exponents.
+  Let
+  \begin{equation*}
+    \text{factorization}(n - 1) = \left<\left<p_1, w_1\right>, \cdots, \left<p_k, w_k\right>, \alpha_1, \cdots, \alpha_k\right>,
+  \end{equation*}
+  where $w_i$ is the witness pair for $p_i$.
+  Note that the witness pair is recursively defined,
+  because the factorization of $n - 1$ contains assertion of primes
+  that are less than $n - 1$.
   Therefore, $\PRIME \in \NP$.
 
   Then we prove that $\PRIME \in \coNP$. Suppose $n$ is not a prime number
