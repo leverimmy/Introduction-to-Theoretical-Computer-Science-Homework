@@ -375,12 +375,11 @@
 
   Secondly, we will show that $n^{Z(n)}$ is computable in time polynomial in $n$.
   Since $Z(n)$ is represented in binary format,
-  the length of $Z(n)$ is on the order of $O(2^{Z(n)})$.
-  Each multiplication can be done in polynomial time,
-  and $Z(n)$ is computable in time polynomial in $n$,
-  so using \href{https://en.wikipedia.org/wiki/Exponentiation_by_squaring}{exponentiation by squaring},
-  we can compute $n^{Z(n)}$ in time $O(n \cdot \log(2^{Z(n)})) = O(n \cdot Z(n))$,
-  which is still polynomial in $n$.
+  the length of $Z(n)$ is on the order of $O(\log Z(n))$.
+  Each multiplication can be done in polynomial time in $n$,
+  and we need to multiply $n$ by itself $Z(n)$ times,
+  where $Z(n) = O(\log\log n)$.
+  Therefore, $n^{Z(n)}$ is computable in time polynomial in $n$.
 
   Therefore, both $Z(n)$ and $n^{Z(n)}$ are computable in time polynomial in $n$.
 
