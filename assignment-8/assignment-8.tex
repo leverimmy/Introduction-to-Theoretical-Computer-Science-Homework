@@ -1,0 +1,105 @@
+\documentclass{homework}
+\usepackage{bussproofs}
+\EnableBpAbbreviations
+\usepackage{ctex,hyperref,float,algorithm,algorithmic}
+\hypersetup{hidelinks,
+	colorlinks=true,
+	allcolors=blue,
+	pdfstartview=Fit,
+	breaklinks=true
+}
+
+\name{熊泽恩} % Replace (Student Name) with your name.
+\id{2022011223}
+\term{2024 Spring}
+\course{Introduction to Theoretical Computer Science}
+\hwnum{8}
+
+%\hwname{(Name)}          % Uncomment and replace (Name) with the type of the
+                          % homework (e.g, Assignment, Problem Set, etc.) if you
+                          % don't want the document to be labeled as "Homework."
+%\problemname{(Name)}     % Uncomment and replace (Name) with the desired label
+                          % for problems created with the problem environment.
+%\solutionname{(Name)}    % Uncomment and replace (Name) with the desired label
+                          % for solutions created with the solution environment.
+
+% Load any other packages you need here.
+
+\begin{document}
+
+\begin{problem}
+  Two aliens have arrived on Earth, each claiming to possess a machine that can
+  solve the $\SAT$ problem in polynomial time.
+  However, only one of these machines is genuine, while the other is a
+  counterfeit.
+  Your task is to design a protocol for solving the $\SAT$ problem in polynomial
+  time by asking questions to their machines.
+\end{problem}
+
+\begin{solution}
+  
+  Let the two aliens be $A$ and $B$,
+  and their machines be $M_{A}$ and $M_{B}$ respectively.
+  Suppose $M_{A}$ corresponds to a algorithm $A$
+  which can decide whether $\varphi(x_1, x_2, \cdots, x_n)$
+  is satisfiable or not in polynomial time.
+  
+  Consider algorithm $S$ as follows:
+  \begin{enumerate}
+    \item For $i = 1, 2, \cdots, n$ do:
+    \begin{enumerate}
+      \item Use $M_{A}$ to check whether
+        $\varphi(a_1, \cdots, a_{i-1}, 0, x_{i+1}, \cdots, x_n)$
+        is satisfiable or not.
+      \item If so, set $a_i = 0$. Otherwise, set $a_i = 1$.
+    \end{enumerate}
+    \item Check if $a = (a_1, a_2, \cdots, a_n)$ is a ``satisfying'' assignment for $\varphi$.
+      Output $a$ if it is.
+  \end{enumerate}
+
+  Since one of the machines is a counterfeit,
+  we couldn't guarantee that the output is a truly satisfying assignment.
+  However, $\SAT \in \NP$, so we can verify the output in polynomial time.
+  If the output is a truly satisfying assignment, then $M_A$ is the genuine machine.
+  Otherwise, $M_B$ is the genuine machine.
+
+  Now that we have decided which machine is genuine,
+  we can use it to solve the $\SAT$ problem in polynomial time.
+
+\end{solution}
+
+% \begin{problem}
+%   Prove that if $A \in \P$, then $\P^A = \P$.
+% \end{problem}
+
+% \begin{solution}
+
+% \end{solution}
+
+% \begin{problem}
+%   \begin{parts}
+%     \part\label{a} Let $C \subseteq {\{0,1\}}^{*}$ be a language.
+%     Define another unary language
+%     \begin{equation*}
+%       L(C) = \{ 1^{n} \mid \text{all strings } x \text{ of length } n
+%         \text{ is in } C \}.
+%     \end{equation*}
+%     Prove that $L(C) \in \coNP^{C}$ for all $C$.
+%     \part\label{b}
+%     A DNF formula is the logical OR of terms where each term is the logical AND
+%     of literals.
+%     The width of a DNF formula is the maximum number of literals in a term and
+%     the size of of it is the number of terms.
+%     Prove that $x_{1} \land x_{2} \land \cdots \land x_{N}$ cannot be computed
+%     by a DNF formula $\varphi(x_{1}, x_{2}, \ldots, x_{N})$ of width less then
+%     $N$.
+%     \part\label{c} Use \cref{b} to construct an oracle $C$ such that
+%     $L(C) \not\in \NP^{C}$ thereby showing that $\NP^{C} \ne \coNP^{C}$.
+%   \end{parts}
+% \end{problem}
+
+% \begin{solution}
+
+% \end{solution}
+
+\end{document}
