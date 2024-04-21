@@ -111,9 +111,19 @@
   \begin{prooftree}
     \AXC{}
     \LeftLabel{($\beta$)}
-    \UIC{$(\lambda xy.y)uv = v$}
+    \UIC{$(\lambda xy.y)u = \lambda y.y$}
+    \AXC{}
+    \LeftLabel{(refl)}
+    \UIC{$v = v$}
+    \LeftLabel{(app)}
+    \BIC{$(\lambda xy.y)uv = (\lambda y.y)v$}
+    \AXC{}
+    \LeftLabel{($\beta$)}
+    \UIC{$(\lambda y.y)v = v$}
+    \LeftLabel{(trans)}
+    \BIC{$(\lambda xy.y)uv = v$}
     \LeftLabel{(abst)}
-    \UIC{$\lambda uv(\lambda xy.y)uv = \lambda uv.v$}
+    \UIC{$\lambda uv.(\lambda xy.y)uv = \lambda uv.v$}
     \LeftLabel{($\alpha$)}
     \AXC{}
     \UIC{$\lambda uv.v = \lambda ab.b$}

@@ -40,31 +40,30 @@
   
   Let the two aliens be $A$ and $B$,
   and their machines be $M_{A}$ and $M_{B}$ respectively.
-  Suppose $M_{A}$ corresponds to a algorithm $A$
-  which can decide whether $\varphi(x_1, x_2, \cdots, x_n)$
-  is satisfiable or not in polynomial time.
+  Given a formula $\varphi$ as input,
+  we ask $M_{A}$ and $M_{B}$ whether $\varphi$ is satisfiable or not.
   
-  Consider algorithm $S$ as follows:
   \begin{enumerate}
-    \item For $i = 1, 2, \cdots, n$ do:
-    \begin{enumerate}
-      \item Use $M_{A}$ to check whether
-        $\varphi(a_1, \cdots, a_{i-1}, 0, x_{i+1}, \cdots, x_n)$
-        is satisfiable or not.
-      \item If so, set $a_i = 0$. Otherwise, set $a_i = 1$.
-    \end{enumerate}
-    \item Check if $a = (a_1, a_2, \cdots, a_n)$ is a ``satisfying'' assignment for $\varphi$.
-      Output $a$ if it is.
+    \item If both machines output ``yes'', then the answer is ``yes''.
+    \item If both machines output ``no'', then the answer is ``no''.
+    \item If one machine outputs ``yes'' and the other outputs ``no'',
+      then we proceed to the next step. Without loss of generality,
+      assume that $M_{A}$ outputs ``yes'' and $M_{B}$ outputs ``no''.
+      Consider algorithm $S$ as follows:
+      \begin{enumerate}
+        \item For $i = 1, 2, \cdots, n$ do:
+        \begin{enumerate}
+          \item Use $M_{A}$ to check whether
+            $\varphi(a_1, \cdots, a_{i-1}, 0, x_{i+1}, \cdots, x_n)$
+            is satisfiable or not.
+          \item If so, set $a_i = 0$. Otherwise, set $a_i = 1$.
+        \end{enumerate}
+        \item Check if $a = (a_1, a_2, \cdots, a_n)$ is a satisfying assignment for $\varphi$.
+          If so, then the answer is ``yes''. Otherwise, the answer is ``no''.
+      \end{enumerate}
   \end{enumerate}
-
-  Since one of the machines is a counterfeit,
-  we couldn't guarantee that the output is a truly satisfying assignment.
-  However, $\SAT \in \NP$, so we can verify the output in polynomial time.
-  If the output is a truly satisfying assignment, then $M_A$ is the genuine machine.
-  Otherwise, $M_B$ is the genuine machine.
-
-  Now that we have decided which machine is genuine,
-  we can use it to solve the $\SAT$ problem in polynomial time.
+  
+  Therefore, the protocol above can solve the $\SAT$ problem in polynomial time.
 
 \end{solution}
 
