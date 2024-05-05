@@ -1,0 +1,247 @@
+\documentclass{homework}
+\usepackage{bussproofs}
+\EnableBpAbbreviations
+\usepackage{ctex,hyperref,float,algorithm,algorithmic}
+
+\name{熊泽恩} % Replace (Student Name) with your name.
+\id{2022011223}
+\term{2024 Spring}
+\course{Introduction to Theoretical Computer Science}
+\hwnum{9}
+
+%\hwname{(Name)}          % Uncomment and replace (Name) with the type of the
+                          % homework (e.g, Assignment, Problem Set, etc.) if you
+                          % don't want the document to be labeled as "Homework."
+%\problemname{(Name)}     % Uncomment and replace (Name) with the desired label
+                          % for problems created with the problem environment.
+%\solutionname{(Name)}    % Uncomment and replace (Name) with the desired label
+                          % for solutions created with the solution environment.
+
+% Load any other packages you need here.
+
+\begin{document}
+
+% \begin{problem}
+%   Prove that any $\PSPACE$-hard problem is also $\NP$-hard.
+% \end{problem}
+
+% \begin{solution}
+
+% \end{solution}
+
+\begin{problem}
+  Prove that $\TQBF$ restricted to formulas where the part following the
+  quantifiers is in conjunctive normal form (CNF) is still $\PSPACE$-complete.
+\end{problem}
+
+\begin{lemma}
+  (Tseytin Transformation)
+  An example of the Tseytin Transformation is as follows.
+  Denote $n$ as the length of $\psi$.
+  Let $\psi = ((p \lor q) \land r) \to (\lnot s)$, then
+
+  \begin{enumerate}
+    \item Take all the subformulas of $\psi$:
+          \begin{align*}
+            &\lnot s, \\
+            &p \lor q, \\
+            &(p \lor q) \land r, \\
+            &((p \lor q) \land r) \to (\lnot s).
+          \end{align*}
+          Since the number of subformulas equals to the number of operators,
+          so there the number of subformulas is $O(n)$.
+          \begin{align*}
+            & x_1 \leftrightarrow \lnot s, \\
+            & x_2 \leftrightarrow p \lor q, \\
+            & x_3 \leftrightarrow x_2 \land r, \\
+            & x_4 \leftrightarrow x_3 \to x_1.
+          \end{align*}
+          As a result of step(1), the number of variables which we have
+          introduced is $O(n)$.
+    \item Conjunct all substitutions and the substitution for $\psi$:
+          $\psi' = x_4 \land (x_4 \leftrightarrow x_3 \to x_1) \land (x_3 \leftrightarrow x_2 \land r) \land (x_2 \leftrightarrow p \lor q) \land (x_1 \leftrightarrow \lnot s)$
+    \item All substitutions can be transformed into CNF.
+          Note that each subterm, for instance, $x_2 \leftrightarrow p \lor q$,
+          is a 3-CNF. So expand them and we will gain at most $2^3 n$ formulas,
+          which is still $O(n)$.
+  \end{enumerate}
+  Therefore, the length of $\psi'$ is linear to that of $\psi$.
+  And it is clear that the Tseytin Transformation is polynomial-time computable.
+\end{lemma}
+
+\begin{solution}
+
+  Denote the problem as $\TQBF(\text{CNF})$. Consider Turing machine $S$:
+
+  \begin{enumerate}
+    \item Suppose the input is $\tuple{\varphi}$. If $\varphi$ has no quantifiers,
+          Then $\varphi$ has no variables. It either ``True'' or ``False.''
+          Output accordingly.
+    \item If $\varphi = \exists x\; \psi$, then evaluate $\psi$ with $x$
+          equals true or false recursively. Accept if either case accepts.
+          Reject otherwise.
+    \item If $\varphi = \forall x\; \psi$, then evaluate $\psi$ with $x$
+          equals true or false recursively. Accept if both case accepts.
+          Reject otherwise.
+  \end{enumerate}
+  Each recursive level uses constant extra space, so that the space complexity
+  of $S$ is $O(n)$. So $\TQBF(\text{CNF}) \in \PSPACE$.
+
+  Now we will prove that $\TQBF(\text{CNF})$ is $\PSPACE$-complete by
+  reducing $\TQBF$ to $\TQBF(\text{CNF})$.
+  Given $\varphi = Q_1x_1Q_2x_2\cdots Q_kx_k\;\psi \in \TQBF$,
+  then using the Tseytin Transformation,
+  we can transform $\psi$ into $\psi'$ in polynomial time,
+  and the length of $\psi'$ is linear to that of $\psi$.
+
+  Therefore, $\TQBF(\text{CNF})$ is $\PSPACE$-complete.
+
+\end{solution}
+
+\begin{problem}
+  Let $\problemsty{SUM} = \{ \tuple{x, y, z} \mid x, y, z > 0 \text{ are binary
+    integers satisfying } x+y=z \}$.
+  Show that $\problemsty{SUM} \in \L$.
+\end{problem}
+
+\begin{solution}
+
+  It is not possible to calculate $x + y$ directly because we only can use
+  an additional $O(\log n)$ space.
+  However, we can construct an algorithm as follows.
+  We use the pair $\tuple{p, c}$ to describe the current state,
+  where $p$ is the position of the bit we're calculating,
+  and $c \in \{0, 1\}$ is the carry of the result that we have already calculated.
+
+  We can calculate the result from the lowest bit to the highest,
+  bit by bit, increment $p$ by one after every calculation of each bit.
+
+  Since $p$ will not exceed the length of input $n$,
+  so $p \le n$, and the space complexity for $p$ is $O(\log n)$.
+  Additionally, $c$ only needs $O(1)$ space to store.
+  Therefore, $\problemsty{SUM} \in \L$.
+
+\end{solution}
+
+\begin{problem}
+  \begin{parts}
+    \part\label{a} An undirected graph is \emph{bipartite} if its nodes may be divided
+    into two sets so that all edges go from a node in one set to a node in the
+    other set.
+    Show that a graph is bipartite if and only if it doesn't contain a cycle
+    that has an odd number of nodes.
+    \part\label{b} Let $\problemsty{BIPARTITE} = \{ \tuple{G} \mid G \text{ is a
+      bipartite graph} \}$.
+    Prove that $\problemsty{BIPARTITE}$ is in $\NL$.
+  \end{parts}
+\end{problem}
+
+\begin{solution}
+
+  \ref{a}
+
+  Suppose that $G$ is bipartite, and let $V_1$ and $V_2$ be the two sets of
+  nodes such that all edges go between $V_1$ to $V_2$. Each edge permits us
+  to travel from a node in $V_1$ to a node in $V_2$ and vice versa. Thus, if
+  we start at a node in $V_1$ and follow an edge, we must arrive at a node in
+  $V_2$. If we follow another edge, we must arrive at a node in $V_1$. We can
+  continue this process. If it forms a cycle, then the number of nodes in the
+  cycle must be even since we alternate between nodes in $V_1$ and $V_2$.
+
+  Suppose $G$ doesn't contain a cycle with an odd number of nodes. We can
+  start at any node and assign it to $V_1$. Then, we assign all neighbors of
+  nodes in $V_1$ to $V_2$, and all neighbors of nodes in $V_2$ to $V_1$. We
+  continue this process until no more nodes can be assigned. Since all cycles
+  have an even number of nodes, all nodes in the cycle will alternate
+  between $V_1$ and $V_2$, and we won't have any conflicts. Thus, $G$ is
+  bipartite.
+
+  Therefore, a graph is bipartite if and only if it doesn't contain a cycle
+  that has an odd number of nodes.
+
+  \ref{b}
+
+  Suppose $G = \tuple{V, E}$.
+  Construct a nondeterministic Turing machine $M$ as follows.
+  Denote the current state as $\tuple{v, l}$,
+  where $v$ is the current vertex, $l$ is the length of the current path.
+  For each vertex $v_{\text{init}} \in V$:
+  \begin{enumerate}
+    \item Start from $v_{\text{init}}$, and
+    $\tuple{v, l} \gets \tuple{v_{\text{init}, 1}}$.
+    \item 
+      \begin{enumerate}
+        \item Nondeterministically guess the next vertex $u$.
+        \item If edge $(v, u) \in E$:
+          \begin{itemize}
+            \item If $u = v_{\text{init}}$,
+            \begin{itemize}
+              \item If $l$ is odd, return $\tuple{G} \notin \problemsty{BIPARTITE}$.
+              \item If $l$ is even, return $\tuple{G} \in \problemsty{BIPARTITE}$.
+            \end{itemize}
+            \item Otherwise, $v \gets u, l \gets l + 1$.
+          \end{itemize}
+        \item If $l \ge |V|$, guess another vertex $u$.
+      \end{enumerate}
+    \item Return $\tuple{G} \in \problemsty{BIPARTITE}$.
+  \end{enumerate}
+
+  Since the length of the longest simple cycle in graph $G$ is less than $|V|$,
+  so $l \le |V|$.
+  Therefore, the cost of space complexity for storing $\tuple{v, l}$ is $O(\log n)$.
+
+  Hence, $\problemsty{BIPARTITE}$ is in $\NL$.
+
+\end{solution}
+
+\begin{problem}
+  Let $S(n) \ge \log n$ be a space-constructible function.
+  Show that $\NSPACE(S(n)) = \class{coNSPACE}(S(n))$ is a consequence of
+  $\NL = \class{coNL}$.
+\end{problem}
+
+\begin{solution}
+
+  Suppose that $\NL = \class{coNL}$. Consider a problem $Q \in \NSPACE(S(n))$
+  with an alphabet $\Sigma$.
+  Since $S(n) \ge \log n$, so there exists $m \in \mathbb{N}$
+  such that $S(n) = \log m$.
+  Pad the input $\tuple{I}$ to $\tuple{I'} = \tuple{I\;c^{m - n}}$,
+  where character $c \notin \Sigma$, so $|\tuple{I'}| = m$.
+
+  Suppose the corresponding nondeterministic Turing machine for $Q$ is $M$.
+  Construct a new nondeterministic Turing machine $M'$ as follows:
+
+  \begin{enumerate}
+    \item Parse the input as $\tuple{I'} = \tuple{I\;c^k}$.
+    \item Use $M$ to solve $\tuple{I}$. Return the result.
+  \end{enumerate}
+
+  We have constructed a new nondeterministic Turing machine $M'$ that
+  solves the problem $Q'$, where $Q'$ corresponds to $M'$ and $Q' \in \class{coNL}$.
+  Now we will construct a new machine $M''$ that
+  solves $Q$ and belongs to $\class{coNSPACE}(S(n))$.
+
+  The machine $M''$ operates as follows:
+
+  \begin{enumerate}
+    \item On input $\tuple{I}$, where $|\tuple{I}| = n$:
+    \item Pad the input to $\tuple{I'} = \tuple{I\;c^{m-n}}$, as before.
+    \item Run $M'$ on input $\tuple{I'}$ to obtain the result $R$.
+    \item If $R$ is "accept," then accept; otherwise, reject.
+  \end{enumerate}
+
+  The machine $M''$ simulates $M'$ on the padded input $\tuple{I'}$
+  and returns the same result. Since $M'$ uses $\log m = S(n)$ space,
+  $M''$ also uses $\log m = S(n)$ space.
+  Therefore, $M''$ solves the problem $Q$ using $\log m = S(n)$ space,
+  which means $Q \in \class{coNSPACE}(S(n))$. This leads to
+  $\NSPACE(S(n)) \subseteq \class{coNSPACE}(S(n))$. Reverse the
+  procedure above, then similarly, we can prove thate
+  $\class{coNSPACE}(S(n)) \subseteq \NSPACE(S(n))$.
+
+  Hence $\NSPACE(S(n)) = \class{coNSPACE}(S(n))$.
+
+\end{solution}
+
+\end{document}
