@@ -236,7 +236,7 @@
 
   By Markov's inequality, we have
   \begin{equation*}
-    \Pr(X \ge 1) \le \E(X) = \binom{n}{4} \cdot (p^6 - p^{12}).
+    \Pr(X \ge 1) \le \E(X) = \binom{n}{4} \cdot (p^6 - p^{12}) = \Theta(n^4)(p^6-p^{12}).
   \end{equation*}
 
   Since $p = o(n^{-2/3})$, then $\lim_{n \to \infty}\E(X) = 0$. Therefore,
@@ -278,7 +278,7 @@
           \end{equation*}
           The number of ways to choose $S, T$ for this case is
           \begin{equation*}
-            \binom{n}{4} \cdot \binom{4}{2} \cdot \binom{n-4}{2} = \binom{n}{4} \cdot (3n^2 - 18n + 24).
+            \binom{n}{6} \cdot \binom{6}{2} \cdot \binom{4}{2} = \Theta(n^6).
           \end{equation*}
     \item $S, T$ have $3$ common vertices: In this case, $\E(X_SX_T) = p^{9}$.
           So
@@ -287,36 +287,32 @@
           \end{equation*}
           The number of ways to choose $S, T$ for this case is
           \begin{equation*}
-            \binom{n}{4} \cdot \binom{4}{3} \cdot \binom{n-4}{1} = \binom{n}{4} \cdot (4n - 4).
+            \binom{n}{5} \cdot \binom{5}{3} \cdot \binom{2}{1} = \Theta(n^5).
           \end{equation*}
   \end{enumerate}
 
   By summing up all four cases together, we have
   \begin{align*}
-    \text{Cov}(X_S, X_T) & = \binom{n}{4} \cdot 
-    ((3n^2 - 18n + 24) \cdot (p^{11} - p^{12}) 
-    + (4n - 4) \cdot (p^{9} - p^{12})) \\
-    & = \binom{n}{4} \cdot (-3 n^2 p^{12} + 3 n^2 p^{11} + 14 n p^{12} - 18 n p^{11} + 4 n p^9 - 20 p^{12} + 24 p^{11} - 4 p^9) \\
+    \text{Cov}(X_S, X_T) & = \Theta(n^6)(p^{11} - p^{12}) + \Theta(n^5)(p^{9} - p^{12}) \\
+    & \le \Theta(n^6)p^{11} + \Theta(n^5)p^{9}
   \end{align*}
 
   So the variance of $X$ is
   \begin{align*}
     \Var(X) & = \sum_{S}\Var(X_S) + \sum_{S \neq T}\text{Cov}(X_S, X_T) \\
-    & = \binom{n}{4} \cdot (-3 n^2 p^{12} + 3 n^2 p^{11} + 14 n p^{12} - 18 n p^{11} + 4 n p^9 - 21 p^{12} + 24 p^{11} - 4 p^9 + p^6).
+    & \le O(n^4p^6) + \Theta(n^6)p^{11} + \Theta(n^5)p^{9}
   \end{align*}
 
   Therefore, when $p = \omega(n^{-2/3})$,
   \begin{align*}
     & \quad \lim_{n \to \infty} \frac{\Var(X)}{{\bigl(\E(X)\bigr)}^{2}} \\
-    & = \lim_{n \to \infty}\frac{\binom{n}{4} \cdot (-3 n^2 p^{12} + 3 n^2 p^{11} + 14 n p^{12} - 18 n p^{11} + 4 n p^9 - 21 p^{12} + 24 p^{11} - 4 p^9 + p^6)}
-    {\bigl(\binom{n}{4} \cdot (p^6 - p^{12})\bigr)^2} \\
-    & = \lim_{n \to \infty}\frac{-3 n^2 p^{12} + 3 n^2 p^{11} + 14 n p^{12} - 18 n p^{11} + 4 n p^9 - 21 p^{12} + 24 p^{11} - 4 p^9 + p^6}
-    {\binom{n}{4}(p^6 - p^{12})^2} \\
-    & = \lim_{n \to \infty}\frac{o(n^2p^6)}{O(n^4p^{12})} \\
+    & \le \lim_{n \to \infty}\frac{O(n^4p^6) + \Theta(n^6)p^{11} + \Theta(n^5)p^{9}}
+    {\Theta(n^4)(p^6 - p^{12})} \\
+    & = \lim_{n \to \infty}\frac{O(1) + \Theta(n^2)p^5 + \Theta(n)p^3}{1 - p^6} \\
     & = 0.
   \end{align*}
 
-  Hence, we have
+  Since $\frac{\Var(X)}{{\bigl(\E(X)\bigr)}^{2}} \ge 0$, hence, we have
   \begin{equation*}
     \lim_{n \to \infty} \Pr(G \text{ does not contain a $4$-clique}) = 0.
   \end{equation*}

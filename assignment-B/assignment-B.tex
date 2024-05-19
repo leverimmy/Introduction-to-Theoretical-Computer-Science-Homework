@@ -1,0 +1,191 @@
+\documentclass{homework}
+\usepackage{ctex,hyperref,float,algorithm,algorithmic,pgfplots}
+
+\name{熊泽恩} % Replace (Student Name) with your name.
+\id{2022011223}
+\term{2024 Spring}
+\course{Introduction to Theoretical Computer Science}
+\hwnum{11}
+
+%\hwname{(Name)}          % Uncomment and replace (Name) with the type of the
+                          % homework (e.g, Assignment, Problem Set, etc.) if you
+                          % don't want the document to be labeled as "Homework."
+%\problemname{(Name)}     % Uncomment and replace (Name) with the desired label
+                          % for problems created with the problem environment.
+%\solutionname{(Name)}    % Uncomment and replace (Name) with the desired label
+                          % for solutions created with the solution environment.
+
+% Load any other packages you need here.
+
+\begin{document}
+
+\begin{problem}
+  Prove that the function family
+  \begin{equation*}
+    \mathcal{H} = \bigl\{ h_{a,b} \mid h_{a,b}(x) = a \cdot x + b, a\in {\{0,1\}}^{k},
+    b\in \{0,1\} \bigr\}
+  \end{equation*}
+  is a pairwise independent hash function family for range $R = \{0,1\}$ and
+  domain $U = {\{0,1\}}^{k}$.
+\end{problem}
+
+\begin{solution}
+
+  All the computations are under modulo 2.
+
+  \begin{lemma}
+    Given $x \in \{0, 1\}^k, x \neq 0$, then
+    \begin{equation*}
+      \Pr_{a \in \{0, 1\}^k}(a \cdot x = 0) = \frac{1}{2}.
+    \end{equation*}
+  \end{lemma}
+
+  \begin{proof}
+    Assume $x_i = 1$ for some $i \in [0, k - 1]$. Then
+    \begin{equation*}
+      \Pr_{a \in \{0, 1\}^k}(a \cdot x = 0) = \Pr_{a_i \in \{0, 1\}}(a_i = \sum_{j \neq i}a_jx_j) = \frac{1}{2}.
+    \end{equation*}
+    \hfill\qedsymbol
+  \end{proof}
+
+  It is easy to verify that
+  \begin{equation*}
+    \Pr_{a \in \{0, 1\}^k, b \in \{0, 1\}}(h(x_1) = y_1) = \frac{1}{|R|} = \frac{1}{2},
+  \end{equation*}
+  so we only need to prove that, for any two distinct elements $x_1, x_2 \in U = \{0, 1\}^k$,
+  and two (possibly equal) elements $y_1, y_2 \in R = \{0, 1\}$, we have
+  \begin{equation*}
+    \Pr_{a \in \{0, 1\}^k, b \in \{0, 1\}}(h_{a, b}(x_1) + b = y_1
+    \text{ and } h_{a, b}(x_2) + b = y_2) = \frac{1}{4}.
+  \end{equation*}
+  This is equivalent to proving that
+  \begin{equation*}
+    \Pr_{a \in \{0, 1\}^k, b \in \{0, 1\}}(a \cdot x_1 + b = y_1
+    \text{ and } a \cdot x_2 + b = y_2) = \frac{1}{4}.
+  \end{equation*}
+
+  Separate $a$ and $b$ as follows:
+  \begin{align*}
+    \quad & \Pr_{a \in \{0, 1\}^k, b \in \{0, 1\}}(h_{a, b}(x_1) = y_1 \text{ and } h_{a, b}(x_2) = y_2) \\
+    & = \Pr_{a, b}(a \cdot x_1 + b = y_1 \text{ and } a \cdot x_2 + b = y_2) \\
+    & = \Pr_{a, b}(a \cdot (x_1 \oplus x_2) = y_1 \oplus y_2 \text{ and } b = y_1 \oplus a\cdot x_1) \\
+    & = \Pr_{a}(a \cdot (x_1 \oplus x_2) = y_1 \oplus y_2) \cdot \Pr_{b}(b = y_1 \oplus a \cdot x_1 \mid a = a_0).
+  \end{align*}
+  Now that $x_1 \oplus x_2 \neq 0$, so by the lemma, we know that
+  \begin{equation*}
+    \Pr_{a}(a \cdot (x_1 \oplus x_2) = y_1 \oplus y_2) = \frac{1}{2}.
+  \end{equation*}
+  Also, fix $a = a_0$, then $\Pr_{b}(b = y_1 \oplus a \cdot x_1 \mid a = a_0) = \frac{1}{2}$.
+  Therefore we have
+  \begin{equation*}
+    \Pr_{a \in \{0, 1\}^k, b \in \{0, 1\}}(a \cdot x_1 + b = y_1
+    \text{ and } a \cdot x_2 + b = y_2) = \frac{1}{4},
+  \end{equation*}
+  and $\mathcal{H}$ is a pairwise independent hash function family.
+
+\end{solution}
+
+\begin{problem}
+  \begin{parts}
+    \part\label{2.a} Consider a random walk $X_{0}, X_{1}, X_{2}, \ldots$ on a chain
+    of $n+1$ vertices $0, 1, \ldots, n$ with the following transition
+    probabilities
+    \begin{equation*}
+      \Pr(X_{t} = k | X_{t-1} = j) =
+      \begin{cases}
+        \frac{1}{2} & \text{ if } j \in [1,n-1] \text{ and } k = j \pm 1,\\
+        1 & \text{ if } j = 0, k = 1 \text{ or } j=n, k=n,\\
+        0 & \text{ otherwise}.
+      \end{cases}
+    \end{equation*}
+    Let $T_{i}$ be the expected number of steps the walk takes to arrive at the
+    end vertex $n$ starting with $X_{0} = i$.
+    Prove that $T_{i} \le n^{2}$ for all $i \in [0,n]$.
+    \part\label{2.b} Consider the following randomized algorithm for $\TWOSAT$
+    problems of $n$ variables.
+    \begin{algorithmic}[1]
+      \STATE{Choose an arbitrary initial assignment.}
+      \FOR{$t = 1, 2, \ldots, 2n^{2}$}
+        \IF{the current assignment is satisfying}
+          \STATE{Accept immediately.}
+        \ELSE{}
+          \STATE{Choose an arbitrary clause not satisfied.}
+          \STATE{Sample one of the two literals uniformly at random.}
+          \STATE{Flip the value of the variable in the sampled literal.}
+        \ENDIF{}
+      \ENDFOR{}
+      \STATE{Reject if haven't accepted.}
+    \end{algorithmic}
+    Use Markov inequality to show that the algorithm will find a satisfying
+    solution with probability at least $\frac{1}{2}$ given a yes-instance as
+    input.
+  \end{parts}
+\end{problem}
+
+\begin{solution}
+
+  \ref{2.a}
+
+  From the definition of $T_{i}$, we have
+  \begin{equation*}
+    T_{i} = 1 + \frac{1}{2}T_{i-1} + \frac{1}{2}T_{i+1}, \quad 1 \le i \le n - 1,
+  \end{equation*}
+  and
+  \begin{equation*}
+    T_{0} = 1 + T_{1}, \quad T_{n} = 1.
+  \end{equation*}
+  We can rewrite the above equations as
+  \begin{equation*}
+    T_{i} - T_{i-1} = T_{i+1} - T_{i} + 2 \quad 1 \le i \le n - 1.
+  \end{equation*}
+  Summing up the above equations for $i \in [1, n - 1]$, we have
+  \begin{equation*}
+    T_{n-1} - T_{0} = T_{n} - T_{1} + 2(n-1).
+  \end{equation*}
+  Since $T_{0} = 1 + T_{1}$ and $T_{n} = 1$, we have
+  \begin{equation*}
+    T_{n-1} = 2n-1.
+  \end{equation*}
+  Now we will prove that $T_{i} = n^2 - i^2$ holds for all $i \in [0, n]$ by induction.
+
+  \begin{itemize}
+    \item \textbf{Base case:} $T_{n} = n^2$ and $T_{n - 1} = n^2 - (n - 1)^2 = 2n - 1$.
+    \item \textbf{Inductive step:} Suppose that $T_{i} = n^2 - i^2$ holds for
+          all $i \ge k \in [1, n - 1]$.
+    Then we have $T_{i - 1} = 2T_i - T_{i + 1} - 2 = 2(n^2 - i^2) - (n^2 - (i + 1)^2) - 2 = n^2 - (i - 1)^2$.
+    \item \textbf{Conclusion:} By induction, we have $T_{i} = n^2 - i^2$ for all $i \in [1, n]$.
+          Consider the special case $i = 0$, we have $T_{0} = 1 + T_{1} = 1 + (n^2 - 1) = n^2$.
+          Therefore, we have $T_{i} = n^2 - i^2$ for all $i \in [0, n]$.
+  \end{itemize}
+  Hence, $T_{i} \le n^2$ for all $i \in [0, n]$.
+
+  \ref{2.b}
+
+  Consider the random variable $X_i$. $X_i$ is the number of steps used to
+  reach the state that $i$ variables have the correct assignments.
+  Suppose we have sampled the literal $l_{i, 1}$.
+  \begin{itemize}
+    \item If it already has the correct value, then after we flip its value,
+          it would be wrong, ending up with the state $X_{i - 1}$.
+    \item If it has the wrong value, then after we flip its value,
+          it would be correct, ending up with the state $X_{i + 1}$.
+  \end{itemize}
+  Each of the cases above has a probability of $\frac{1}{2}$.
+  Therefore, it is the same procedure as the random walk in part \ref{2.a}.
+  
+  The target is to have all the $n$ variables assigned with a correct value.
+  And the number of steps to reach the state that all the variables
+  have the correct assignments (i.e. the state $X_n$), from the state that initially have $i$
+  correct assignments (i.e. the state $X_i$), is $Y_i$. Denote $T_i = \E(Y_i)$
+  as its expectation.
+
+  Then, by Markov inequality, we have
+  \begin{equation*}
+    \Pr(Y_i \ge 2n^2) \le \frac{\E(Y_i)}{2n^2} = \frac{T_i}{2n^2} \le \frac{n^2}{2n^2} = \frac{1}{2}.
+  \end{equation*}
+  Hence, after $2n^2$ steps, the algorithm will find a satisfying solution
+  with probability at least $\frac{1}{2}$ given a yes-instance as input.
+
+\end{solution}
+
+\end{document}
