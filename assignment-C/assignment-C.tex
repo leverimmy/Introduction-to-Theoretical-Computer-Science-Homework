@@ -1,0 +1,193 @@
+\documentclass{homework}
+\usepackage{ctex,hyperref,float,algorithm,algorithmic,pgfplots}
+
+\name{熊泽恩} % Replace (Student Name) with your name.
+\id{2022011223}
+\term{2024 Spring}
+\course{Introduction to Theoretical Computer Science}
+\hwnum{12}
+
+%\hwname{(Name)}          % Uncomment and replace (Name) with the type of the
+                          % homework (e.g, Assignment, Problem Set, etc.) if you
+                          % don't want the document to be labeled as "Homework."
+%\problemname{(Name)}     % Uncomment and replace (Name) with the desired label
+                          % for problems created with the problem environment.
+%\solutionname{(Name)}    % Uncomment and replace (Name) with the desired label
+                          % for solutions created with the solution environment.
+
+% Load any other packages you need here.
+
+\begin{document}
+
+\begin{problem}
+  Let $G$ be a pseudorandom generator of stretch $\ell$ such that $\ell(n) \ge 2n$.
+  \begin{parts}
+    \part\label{1.a} Define $G'$ as $G'(s) = G(s 0^{\abs{s}})$.
+    Is $G'$ necessarily a pseudorandom generator?
+    \part\label{1.b} Define $G''$ as $G''(s) = G(s_{1} \cdots s_{n/2})$ for
+    $s = s_{1} s_{2} \cdots s_{n}$.
+    Is $G''$ necessarily a pseudorandom generator?
+  \end{parts}
+\end{problem}
+
+\begin{solution}
+
+  \ref{1.a}
+
+  $G'$ is not necessarily a pseudorandom generator. Consider the following
+  counterexample. Let $G_0$ be a pseudorandom generator of stretch $\ell(n) \ge 2n$.
+  Define
+  \begin{equation*}
+    G_1(s) = \begin{cases}
+      0^{\ell(n)}, & \text{ if } \forall i \ge n/2, s_i = 0, \\
+      G_0(s), & \text{ otherwise}.
+    \end{cases}
+  \end{equation*}
+
+  Then, $G_1(s)$ and $G_0(s)$ are only different by a portion of
+  $\frac{2^{n/2}}{2^n} = \frac{1}{2^{n/2}}$, which is negligible in $n$.
+  So any polynomial-time distinguisher $\adv$ can only distinguish $G_1$ and $G_0$
+  with negligible probability. Therefore, $G_1$ is also a pseudorandom generator.
+
+  However, if let $G$ be $G_1$, then $G'(s) \equiv 0^{\ell(n)}$, which is not a
+  pseudorandom generator.
+
+  \ref{1.b}
+  
+  $G''$ is necessarily a pseudorandom generator. Its stretch is
+  \begin{equation*}
+    \ell''(n) = \abs{G''(s)} = \abs{G(s_{1} \cdots s_{n/2})} = \ell(n/2) \ge n.
+  \end{equation*}
+  Since that $G$ is a pseudorandom generator of stretch $\ell$, we have
+  \begin{align*}
+    & \quad \abs{\Pr_{s \in \{0, 1\}^n} \Bigl(\adv(G''(s)) = 1\Bigr) - \Pr_{r \in \{0, 1\}^{\ell''(n)}}\Bigl(\adv(r) = 1\Bigr)} \\
+    & = \abs{\Pr_{s \in \{0, 1\}^n} \Bigl(\adv(G(s_1 s_2 \cdots s_{n/2})) = 1\Bigr) - \Pr_{r \in \{0, 1\}^{\ell(n/2)}}\Bigl(\adv(r) = 1\Bigr)} \\
+    & = \abs{\Pr_{s'' \in \{0, 1\}^{n/2}} \Bigl(\adv(G(s'')) = 1\Bigr) - \Pr_{r \in \{0, 1\}^{\ell(n/2)}}\Bigl(\adv(r) = 1\Bigr)} \\
+    & \le \negl(n).
+  \end{align*}
+  By definition, $G''$ is a pseudorandom generator.
+
+\end{solution}
+
+\begin{problem}
+  A keyed family of functions $F_{k}$ is a pseudorandom random permutation (PRP)
+  if (a) $F_{k}(\cdot)$ and $F^{-1}_{k}(\cdot)$ are efficiently computable given
+  the key $k$ and (b) for any polynomial-time algorithm $\adv$,
+  \begin{equation*}
+    \abs{\Pr \Bigl( \adv^{F_{k}(\cdot), F^{-1}_{k}(\cdot)}(1^{n}) = 1 \Bigr) -
+      \Pr \Bigl( \adv^{f_{n}(\cdot), f^{-1}_{n}(\cdot)}(1^{n}) = 1 \Bigr)}
+    \le \negl(n).
+  \end{equation*}
+  Consider the following encryption scheme
+  \begin{enumerate}
+    \item Sample key $k$ uniformly at random.
+    \item On input plaintext $x \in {\{0,1\}}^{n/2}$, algorithm $\Enc_{k}$
+          samples randomness $r \in {\{0,1\}}^{n/2}$ and outputs ciphertext
+          $F_{k}(r \| x)$.
+  \end{enumerate}
+  Solve the following problems assuming that $F_{k}$ is a PRP\@.
+  \begin{parts}
+    \part\label{2.a} Show how the decryption $\Dec_{k}$ works.
+    \part\label{2.b} Prove that the encryption scheme is CPA-secure.
+  \end{parts}
+
+\end{problem}
+
+\begin{solution}
+
+  \ref{2.a}
+
+  The decryption $\Dec_{k}$ works as follows:
+  \begin{enumerate}
+    \item On input ciphertext $y \in {\{0,1\}}^{n}$, compute $r \| x = F^{-1}_{k}(y)$.
+    \item Return $x$.
+  \end{enumerate}
+
+  \ref{2.b}
+
+  Proof by contradiction. Suppose the encryption scheme $\Pi = (\Enc, \Dec)$
+  is not CPA-secure. Then there exists a polynomial-time adversary
+  $\adv_{\Pi}$ such that
+  \begin{equation*}
+    \Pr \bigl(\adv_{\Pi} \text{ succ} \bigr)
+    \ge \frac{1}{2} + \frac{1}{\poly(n)}. \tag{1}
+  \end{equation*}
+
+  Consider the scheme $\widetilde{\Pi} = (\widetilde{\Enc}, \widetilde{\Dec})$ as the random
+  permutation encryption scheme. Let $r_c$ be the randomness used in the actual
+  encryption, namely, $y = F_k(r_c \| x)$. Suppose $\adv$ makes $q(n)$ queries to $\Enc_k(\cdot)$
+  using randomness $r_1, r_2, \cdots, r_{q(n)}$.
+
+  \begin{enumerate}
+    \item Case 1(Repeat). This is the case where $r_c \in \{r_1, r_2, \cdots, r_{q(n)}\}$.
+          Then $\adv_{\widetilde{\Pi}}$ can obtain $r_c$, so it can successfully
+          distinguish $\widetilde{\Pi}$ from a random permutation. However,
+          the chance of this case is at most $\frac{q(n)}{2^{n/2}}$.
+    \item Case 2(No Repeat). Then this is equivalent to the case where adversary
+          doesn't know $r_c$, which is the same as a perfect OTP. Therefore,
+          \begin{equation*}
+            \Pr \bigl(\adv_{\widetilde{\Pi}} \text{ succ} | \text{no repeat} \bigr)
+            = \frac{1}{2}.
+          \end{equation*}
+  \end{enumerate}
+
+  Concluding the two cases above, we have
+  \begin{align*}
+    \Pr \bigl( \adv_{\widetilde{\Pi}} \text{ succ} \bigr)
+    & = \Pr \bigl(\adv_{\widetilde{\Pi}} \text{ succ} \land
+      \text{ repeat} \bigr) + \Pr \bigl(\adv_{\widetilde{\Pi}} \text{ succ }
+      \land \text{ no repeat} \bigr) \\
+    & \le \Pr (\text{repeat}) +
+      \Pr \bigl(\adv_{\widetilde{\Pi} \text{ succ}} | \text{ no
+      repeat} \bigr) \\
+    & \le \frac{1}{2} + \frac{q(n)}{2^n}. \tag{2}
+  \end{align*}
+
+  Combining (1) and (2), we have
+  \begin{equation*}
+    \abs{\Pr \bigl(\adv_{\Pi} \text{ succ} \bigr) -
+    \Pr \bigl(\adv_{\widetilde{\Pi}} \text{ succ} \bigr)}
+    \ge \frac{1}{\poly(n)}. \tag{3}
+  \end{equation*}
+
+  We will design a distinguisher $\mathcal{D}$ to show that (3) is impossible.
+  Distinguisher $\mathcal{D}$ has oracle access to $\mathcal{O}$ and $\mathcal{O}^{-1}$,
+  with input $1^n$.
+
+  \begin{enumerate}
+    \item Run $\adv(1^n)$ and whenever $\adv$ queries $\Enc_k(\cdot)$ with
+          randomness $r$, answer the query in the following way:
+          \begin{enumerate}
+            \item Choose $r \in \{0, 1\}^{n/2}$ uniformly at random.
+            \item Query $\mathcal{O}(r\| x)$ and obtain response $s'$.
+            \item Return $s'$ to $\adv$.
+          \end{enumerate}
+    \item When $\adv$ outputs $x_0, x_1$, choose $b \in \{0, 1\}$ uniformly at random
+          and then:
+          \begin{enumerate}
+            \item Choose $r \in \{0, 1\}^{n/2}$ uniformly at random.
+            \item Query $\mathcal{O}(r \| x_b)$ and obtain response $s'$.
+            \item Return $s'$ to $\adv$.
+          \end{enumerate}
+    \item Continue answering any queries of $\adv$ as before. When $\adv$ outputs
+          $b'$, output $1$ if $b' = b$ and $0$ otherwise.
+  \end{enumerate}
+
+  Therefore, $\mathcal{D}$ simulates the experiment with $\Pi$ and $\widetilde{\Pi}$.
+  If $\mathcal{O} = F_{k}(\cdot)$, then the view of $\adv$ is
+  identical to the view of $\adv$ in the experiment with $\Pi$.
+  If $\mathcal{O} = f_n(\cdot)$, then the view of $\adv$ is
+  identical to the view of $\adv$ in the experiment with $\widetilde{\Pi}$.
+
+  Hence,
+  \begin{align*}
+    & \quad \abs{\Pr \bigl(\mathcal{D}^{f_n(\cdot), f^{-1}_n(\cdot)}(1^n) = 1 \bigr) - \Pr \bigl(\mathcal{D}^{F_k(\cdot), F^{-1}_k(\cdot)}(1^n) = 1 \bigr)} \\
+    & = \abs{\Pr \bigl(\adv_{\widetilde{\Pi}} \text{ succ} \bigr) - \Pr \bigl(\adv_{\Pi} \text{ succ} \bigr)}\\
+    & = \frac{1}{\poly(n)},
+  \end{align*}
+  which contradicts to the assumption that $F_k$ is a PRP\@.
+  So the encryption scheme is CPA-secure.
+
+\end{solution}
+
+\end{document}
