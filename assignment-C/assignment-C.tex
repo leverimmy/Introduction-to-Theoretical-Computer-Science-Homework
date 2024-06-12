@@ -33,7 +33,6 @@
 \begin{solution}
 
   \ref{1.a}
-
   $G'$ is not necessarily a pseudorandom generator. Consider the following
   counterexample. Let $G_0$ be a pseudorandom generator of stretch $\ell(n) \ge 2n$.
   Define
@@ -53,7 +52,6 @@
   pseudorandom generator.
 
   \ref{1.b}
-  
   $G''$ is necessarily a pseudorandom generator. Its stretch is
   \begin{equation*}
     \ell''(n) = \abs{G''(s)} = \abs{G(s_{1} \cdots s_{n/2})} = \ell(n/2) \ge n.
@@ -96,7 +94,6 @@
 \begin{solution}
 
   \ref{2.a}
-
   The decryption $\Dec_{k}$ works as follows:
   \begin{enumerate}
     \item On input ciphertext $y \in {\{0,1\}}^{n}$, compute $r \| x = F^{-1}_{k}(y)$.
@@ -104,7 +101,6 @@
   \end{enumerate}
 
   \ref{2.b}
-
   Proof by contradiction. Suppose the encryption scheme $\Pi = (\Enc, \Dec)$
   is not CPA-secure. Then there exists a polynomial-time adversary
   $\adv_{\Pi}$ such that

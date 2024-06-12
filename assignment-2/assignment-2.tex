@@ -57,7 +57,6 @@
 \begin{solution}
   
     \ref{2.a} We have
-
     \begin{align*}
       \mathbf{add}\, \church{m}\, \church{n} &\equiv (\lambda nmfx.nf(mfx))\church{m}\,\church{n} \\
       &\betareds \lambda fx.\church{m}f(\church{n}fx) \\
@@ -68,7 +67,6 @@
     \end{align*}
   
     \ref{2.b} We have
-
     \begin{align*}
       \mathbf{mult}\, \church{m}\, \church{n} &\equiv (\lambda nmf.n(mf))\church{m}\,\church{n} \\
       &\betareds \lambda f.\church{m}(\church{n}f) \\
@@ -94,7 +92,6 @@
 \begin{solution}
 
   \ref{3.a} We have
-
   \begin{align*}
     (\lambda xy.yx)((\lambda x.xx)(\lambda x.xx))(\lambda xy.y) &\betareds (\lambda xy.y)((\lambda x.xx)(\lambda x.xx)) \\
     &\betareds \lambda y.y.
@@ -103,7 +100,6 @@
   But it is not strongly normalizable, since the term $(\lambda x.xx)(\lambda x.xx)$ has no \(\beta\)-normal form.
 
   \ref{3.b} We have
-
   \begin{align*}
     (\lambda xy.yx)(\mathbf{k} \mathbf{k})(\lambda x.xx) &\betareds (\lambda x.xx)(\mathbf{k}\mathbf{k}) \\
     &\betareds (\mathbf{k}\mathbf{k})(\mathbf{k}\mathbf{k}) \\
@@ -132,61 +128,52 @@
 \begin{solution}
 
   \ref{4.a} Let $\mathbf{xor}$ be the logical exclusive or function,
-  
   \begin{equation*}
   \mathbf{xor} \equiv \lambda xy.x\,(\mathbf{not}\, y)\, y.
   \end{equation*}
 
   Then we have a recursive definition of $f$ as follows,
-
   \begin{equation*}
     f(n)  = \begin{cases}\; \text{true} & \text{ if } n = 0,\\
               \; f(n-1)\, \mathbf{xor}\, \text{true} & \text{ otherwise.}\end{cases}
   \end{equation*}
 
   So, we have
-  
   \begin{align*}
     f := (\lambda g.\lambda n.\mathbf{ite}\, & (\mathbf{iszero}\, n)\, \mathbf{f} \\
     & (\mathbf{xor}\, \mathbf{t}\,(g (\mathbf{pred}\, n))))\,f
   \end{align*}
 
   By using the Y combinator, we have
-  
   \begin{align*}
     f := \mathbf{y}(\lambda g.\lambda n.\mathbf{ite}\, & (\mathbf{iszero}\, n) \mathbf{t} \\
     & (\mathbf{xor}\, \mathbf{t}\,(g (\mathbf{pred}\, n)))).
   \end{align*}
 
   \ref{4.b} A resucsive definition of the exponential function is as follows,
-
   \begin{equation*}
     \exp(n,m) = \begin{cases}\; 1 & \text{ if } m = 0,\\
               \; n\cdot \exp(n,m-1) & \text{ otherwise.}\end{cases}
   \end{equation*}
 
   So, we have
-  
   \begin{align*}
     \mathbf{exp} := (\lambda f.\lambda nm. \mathbf{ite}\, & (\mathbf{iszero}\, m)\, \church{1} \\
     & (\mathbf{mult}\, n\, (f\, n\, (\mathbf{pred}\, m) )))\, \mathbf{exp}
   \end{align*}
 
   By using the Y combinator, we have
-
   \begin{align*}
     \mathbf{exp} := \mathbf{y}(\lambda f.\lambda nm. \mathbf{ite}\, & (\mathbf{iszero}\, m)\, \church{1} \\
     & (\mathbf{mult}\, n\, (f\, n\, (\mathbf{pred}\, m) )))
   \end{align*}
 
   \ref{4.c} The predecessor function is defined as follows,
-
   \begin{equation*}
     \mathbf{pred} := \lambda n.\lambda f.\lambda x.n(\lambda g.\lambda h.h(gf))(\lambda u.x)(\lambda u.u).
   \end{equation*}
 
   We can verify that by the following computation,
-
   \begin{align*}
     \mathbf{pred}\, \church{m} &\betareds \lambda f.\lambda x.\church{m}(\lambda g.\lambda h.h(gf))(\lambda u.x)(\lambda u.u) \\
     &\betareds \lambda f.\lambda x.(\lambda g.\lambda h.h(gf))^m(\lambda u.x)(\lambda u.u) \\
@@ -216,7 +203,6 @@
   Let's define an auxilliary function $\mathbf{edge}(s, t)$
   to indicate the particular type of relation that leads from $s$ to $t$,
   as follows,
-
   \begin{equation*}
     \mathbf{edge}(s, t):= \begin{cases}
       1 & \text{if } s \red_{1} t,\\

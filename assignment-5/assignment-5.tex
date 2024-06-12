@@ -73,7 +73,6 @@
 \begin{solution}
 
   \ref{2a} The proof is as follows:
-
   \begin{enumerate}
     \item $A \cup B$ is in $\P$, because we can decide whether $x \in A \cup B$
       by first checking whether $x \in A$ and then checking whether $x \in B$.
@@ -93,7 +92,8 @@
       polynomial time. Therefore, $A^{\text{c}} \in \P$.
   \end{enumerate}
 
-  \ref{2b} We can use dynamic programming to maintain a table whose $i,j$-th entry indicates
+  \ref{2b}
+  We can use dynamic programming to maintain a table whose $i,j$-th entry indicates
   whether $x_{i} \cdots x_{j} \in A^{*}$.
   The algorithm is as follows:
   \begin{enumerate}
